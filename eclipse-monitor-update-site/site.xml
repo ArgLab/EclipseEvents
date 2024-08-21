@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/TestPluginProject_1.0.1.jar" id="TestPluginProject" version="1.0.1"/>
-   <!-- <feature url="features/TestPluginProject_1.0.2.jar" id="TestPluginProject" version="1.0.2"/> -->
-
-</site>
