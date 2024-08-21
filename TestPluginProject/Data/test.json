@@ -1,0 +1,803 @@
+{
+   "sequentialEventData":[
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:10.817",
+         "eventData":{
+            "X":306,
+            "Y":12,
+            "fileName":"Hello.java",
+            "time":"2023-09-01 01:39:10.817"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:11.964",
+         "eventData":{
+            "X":284,
+            "Y":12,
+            "fileName":"Hello.java",
+            "time":"2023-09-01 01:39:11.964"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:12.965",
+         "eventData":{
+            "X":191,
+            "Y":15,
+            "fileName":"Hello.java",
+            "time":"2023-09-01 01:39:12.965"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:13.795",
+         "eventData":{
+            "X":90,
+            "Y":17,
+            "fileName":"Error Log (Workspace Log)",
+            "time":"2023-09-01 01:39:13.795"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:19.494",
+         "eventData":{
+            "X":8,
+            "Y":83,
+            "fileName":"Error Log (Workspace Log)",
+            "time":"2023-09-01 01:39:19.494"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:20.121",
+         "eventData":{
+            "X":81,
+            "Y":106,
+            "fileName":"Error Log (Workspace Log)",
+            "time":"2023-09-01 01:39:20.121"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:21.962",
+         "eventData":{
+            "X":70,
+            "Y":14,
+            "fileName":"Error Log (Workspace Log)",
+            "time":"2023-09-01 01:39:21.962"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:22.979",
+         "eventData":{
+            "X":85,
+            "Y":7,
+            "fileName":"Error Log (Workspace Log)",
+            "time":"2023-09-01 01:39:22.979"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:30.544",
+         "eventData":{
+            "X":6,
+            "Y":8,
+            "fileName":"Error Log (Workspace Log)",
+            "time":"2023-09-01 01:39:30.544"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:31.860",
+         "eventData":{
+            "X":59,
+            "Y":15,
+            "fileName":"Error Log (Workspace Log)",
+            "time":"2023-09-01 01:39:31.860"
+         }
+      },
+      {
+         "eventType":"KeyBoardClickEvent",
+         "eventTime":"2023-09-01 01:39:33.017",
+         "eventData":"\u0000Test\u0000Project"
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:34.622",
+         "eventData":{
+            "X":17,
+            "Y":14,
+            "fileName":"Error Log (Workspace Log)",
+            "time":"2023-09-01 01:39:34.622"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:35.794",
+         "eventData":{
+            "X":13,
+            "Y":47,
+            "fileName":"Project Explorer",
+            "time":"2023-09-01 01:39:35.794"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:37.042",
+         "eventData":{
+            "X":31,
+            "Y":79,
+            "fileName":"Project Explorer",
+            "time":"2023-09-01 01:39:37.042"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:39.460",
+         "eventData":{
+            "X":60,
+            "Y":83,
+            "fileName":"Project Explorer",
+            "time":"2023-09-01 01:39:39.460"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:43.731",
+         "eventData":{
+            "X":56,
+            "Y":7,
+            "fileName":"Project Explorer",
+            "time":"2023-09-01 01:39:43.731"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:46.574",
+         "eventData":{
+            "X":133,
+            "Y":8,
+            "fileName":"Project Explorer",
+            "time":"2023-09-01 01:39:46.574"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:53.136",
+         "eventData":{
+            "X":4,
+            "Y":2,
+            "fileName":"Project Explorer",
+            "time":"2023-09-01 01:39:53.136"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:54.128",
+         "eventData":{
+            "X":31,
+            "Y":8,
+            "fileName":"Project Explorer",
+            "time":"2023-09-01 01:39:54.128"
+         }
+      },
+      {
+         "eventType":"KeyBoardClickEvent",
+         "eventTime":"2023-09-01 01:39:55.562",
+         "eventData":"src\u0000Java\u0000Class"
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:39:55.779",
+         "eventData":{
+            "X":321,
+            "Y":81,
+            "fileName":"JavaClass.java",
+            "time":"2023-09-01 01:39:55.779"
+         }
+      },
+      {
+         "eventType":"MenuBarClickEvent",
+         "eventTime":"2023-09-01 01:39:58.929",
+         "eventData":"org.eclipse.ui.edit.text.contentAssist.proposals"
+      },
+      {
+         "eventType":"MenuBarClickEvent",
+         "eventTime":"2023-09-01 01:40:05.703",
+         "eventData":"org.eclipse.ui.file.save"
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:40:08.069",
+         "eventData":{
+            "X":73,
+            "Y":100,
+            "fileName":"Project Explorer",
+            "time":"2023-09-01 01:40:08.069"
+         }
+      },
+      {
+         "eventType":"KeyBoardClickEvent",
+         "eventTime":"2023-09-01 01:40:10.169",
+         "eventData":"\rsysout\u0000\u0000\"\"\u0000\u0000Hello \u0000Wrold\u0000"
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:40:12.529",
+         "eventData":{
+            "X":69,
+            "Y":43,
+            "fileName":"Project Explorer",
+            "time":"2023-09-01 01:40:12.529"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:40:21.215",
+         "eventData":{
+            "X":82,
+            "Y":137,
+            "fileName":"Project Explorer",
+            "time":"2023-09-01 01:40:21.215"
+         }
+      },
+      {
+         "eventType":"KeyBoardClickEvent",
+         "eventTime":"2023-09-01 01:40:23.689",
+         "eventData":"\u0000Test"
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:40:28.795",
+         "eventData":{
+            "X":77,
+            "Y":13,
+            "fileName":"JavaClass.java",
+            "time":"2023-09-01 01:40:28.795"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:40:30.125",
+         "eventData":{
+            "X":315,
+            "Y":100,
+            "fileName":"JavaClass.java",
+            "time":"2023-09-01 01:40:30.125"
+         }
+      },
+      {
+         "eventType":"MenuBarClickEvent",
+         "eventTime":"2023-09-01 01:40:31.496",
+         "eventData":"org.eclipse.ui.edit.copy"
+      },
+      {
+         "eventType":"CopyEvent",
+         "eventTime":"2023-09-01 01:40:31.699",
+         "eventData":"System.out.println(\"Hello Wrold\");"
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:40:32.605",
+         "eventData":{
+            "X":154,
+            "Y":13,
+            "fileName":"Test.java",
+            "time":"2023-09-01 01:40:32.605"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:40:33.543",
+         "eventData":{
+            "X":177,
+            "Y":36,
+            "fileName":"Test.java",
+            "time":"2023-09-01 01:40:33.543"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:40:35.685",
+         "eventData":{
+            "X":73,
+            "Y":14,
+            "fileName":"JavaClass.java",
+            "time":"2023-09-01 01:40:35.685"
+         }
+      },
+      {
+         "eventType":"KeyBoardClickEvent",
+         "eventTime":"2023-09-01 01:40:36.000",
+         "eventData":"\u0000Test\u0000"
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:40:37.027",
+         "eventData":{
+            "X":46,
+            "Y":130,
+            "fileName":"JavaClass.java",
+            "time":"2023-09-01 01:40:37.027"
+         }
+      },
+      {
+         "eventType":"MenuBarClickEvent",
+         "eventTime":"2023-09-01 01:40:38.296",
+         "eventData":"org.eclipse.ui.edit.copy"
+      },
+      {
+         "eventType":"CopyEvent",
+         "eventTime":"2023-09-01 01:40:38.495",
+         "eventData":"public static void main(String[] args) {\r\n\t\t// TODO Auto-generated method stub\r\n\t\tSystem.out.println(\"Hello Wrold\");\r\n\r\n\t}"
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:40:39.293",
+         "eventData":{
+            "X":160,
+            "Y":13,
+            "fileName":"Test.java",
+            "time":"2023-09-01 01:40:39.293"
+         }
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:40:40.214",
+         "eventData":{
+            "X":148,
+            "Y":37,
+            "fileName":"Test.java",
+            "time":"2023-09-01 01:40:40.214"
+         }
+      },
+      {
+         "eventType":"MenuBarClickEvent",
+         "eventTime":"2023-09-01 01:40:41.311",
+         "eventData":"org.eclipse.ui.edit.paste"
+      },
+      {
+         "eventType":"PasteEvent",
+         "eventTime":"2023-09-01 01:40:41.514",
+         "eventData":"public static void main(String[] args) {\r\n\t\t// TODO Auto-generated method stub\r\n\t\tSystem.out.println(\"Hello Wrold\");\r\n\r\n\t}"
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:40:43.400",
+         "eventData":{
+            "X":275,
+            "Y":81,
+            "fileName":"Test.java",
+            "time":"2023-09-01 01:40:43.400"
+         }
+      },
+      {
+         "eventType":"MenuBarClickEvent",
+         "eventTime":"2023-09-01 01:40:46.040",
+         "eventData":"org.eclipse.ui.file.save"
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:40:49.417",
+         "eventData":{
+            "X":342,
+            "Y":159,
+            "fileName":"Test.java",
+            "time":"2023-09-01 01:40:49.416"
+         }
+      },
+      {
+         "eventType":"KeyBoardClickEvent",
+         "eventTime":"2023-09-01 01:40:50.632",
+         "eventData":"\u0000\r\u0000 \u0000test\u0000"
+      },
+      {
+         "eventType":"MenuBarClickEvent",
+         "eventTime":"2023-09-01 01:40:51.753",
+         "eventData":"org.eclipse.jdt.debug.ui.localJavaShortcut.run"
+      },
+      {
+         "eventType":"CutEvent",
+         "eventTime":"2023-09-01 01:40:52.204",
+         "eventData":"public static void main(String[] args) {\r\n\t\t// TODO Auto-generated method stub\r\n\t\tSystem.out.println(\"Hello Wrold\");\r\n\r\n\t}"
+      },
+      {
+         "eventType":"ConsoleOutputEvent",
+         "eventTime":"2023-09-01 01:40:52.944",
+         "eventData":"Hello Wrold test\r\n"
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:40:55.464",
+         "eventData":{
+            "X":80,
+            "Y":8,
+            "fileName":"JavaClass.java",
+            "time":"2023-09-01 01:40:55.464"
+         }
+      },
+      {
+         "eventType":"MenuBarClickEvent",
+         "eventTime":"2023-09-01 01:40:58.558",
+         "eventData":"org.eclipse.jdt.debug.ui.localJavaShortcut.run"
+      },
+      {
+         "eventType":"CutEvent",
+         "eventTime":"2023-09-01 01:40:58.770",
+         "eventData":"public static void main(String[] args) {\r\n\t\t// TODO Auto-generated method stub\r\n\t\tSystem.out.println(\"Hello Wrold\");\r\n\r\n\t}"
+      },
+      {
+         "eventType":"ConsoleOutputEvent",
+         "eventTime":"2023-09-01 01:40:59.689",
+         "eventData":"Hello Wrold\r\n"
+      },
+      {
+         "eventType":"MouseClickEvent",
+         "eventTime":"2023-09-01 01:41:00.448",
+         "eventData":{
+            "X":242,
+            "Y":292,
+            "fileName":"JavaClass.java",
+            "time":"2023-09-01 01:41:00.448"
+         }
+      }
+   ],
+   "errorLogList":[
+      {
+         "date":"Aug 30, 2023, 10:42:08 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.jface",
+         "message":"Keybinding conflicts occurred.  They may interfere with normal accelerator operation.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 30, 2023, 10:42:15 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.egit.ui",
+         "message":"Warning: The environment variable HOME is not set. The following directory will be used to store the Git\r\nuser global configuration and to define the default location to store repositories: 'C:\\Users\\samin'. If this is\r\nnot correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and\r\nEGit might behave differently since they see different configuration options.\r\nThis warning can be switched off on the Team > Git > Confirmations and Warnings preference page.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 30, 2023, 10:42:42 PM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Activated before the state location was initialized. Retry after the state location is initialized.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 30, 2023, 10:42:43 PM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Logback config file: H:\\NCSU Semesters\\Research_Eclipse_Plugin\\runtime-EclipseApplication\\.metadata\\.plugins\\org.eclipse.m2e.logback\\logback.2.1.0.20221015-0744.xml",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 30, 2023, 10:42:44 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.jface",
+         "message":"Keybinding conflicts occurred.  They may interfere with normal accelerator operation.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 30, 2023, 10:42:51 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.egit.ui",
+         "message":"Warning: The environment variable HOME is not set. The following directory will be used to store the Git\r\nuser global configuration and to define the default location to store repositories: 'C:\\Users\\samin'. If this is\r\nnot correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and\r\nEGit might behave differently since they see different configuration options.\r\nThis warning can be switched off on the Team > Git > Confirmations and Warnings preference page.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 30, 2023, 11:23:35 PM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Activated before the state location was initialized. Retry after the state location is initialized.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 30, 2023, 11:23:36 PM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Logback config file: H:\\NCSU Semesters\\Research_Eclipse_Plugin\\runtime-EclipseApplication\\.metadata\\.plugins\\org.eclipse.m2e.logback\\logback.2.1.0.20221015-0744.xml",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 30, 2023, 11:23:38 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.jface",
+         "message":"Keybinding conflicts occurred.  They may interfere with normal accelerator operation.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 30, 2023, 11:23:47 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.egit.ui",
+         "message":"Warning: The environment variable HOME is not set. The following directory will be used to store the Git\r\nuser global configuration and to define the default location to store repositories: 'C:\\Users\\samin'. If this is\r\nnot correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and\r\nEGit might behave differently since they see different configuration options.\r\nThis warning can be switched off on the Team > Git > Confirmations and Warnings preference page.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 10:28:42 PM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Activated before the state location was initialized. Retry after the state location is initialized.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 10:28:43 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.core.resources",
+         "message":"The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 10:28:43 PM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Logback config file: H:\\NCSU Semesters\\Research_Eclipse_Plugin\\runtime-EclipseApplication\\.metadata\\.plugins\\org.eclipse.m2e.logback\\logback.2.1.0.20221015-0744.xml",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 10:28:45 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.jface",
+         "message":"Keybinding conflicts occurred.  They may interfere with normal accelerator operation.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 10:28:52 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.egit.ui",
+         "message":"Warning: The environment variable HOME is not set. The following directory will be used to store the Git\r\nuser global configuration and to define the default location to store repositories: 'C:\\Users\\samin'. If this is\r\nnot correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and\r\nEGit might behave differently since they see different configuration options.\r\nThis warning can be switched off on the Team > Git > Confirmations and Warnings preference page.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 10:53:45 PM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Activated before the state location was initialized. Retry after the state location is initialized.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 10:53:46 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.core.resources",
+         "message":"The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 10:53:46 PM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Logback config file: H:\\NCSU Semesters\\Research_Eclipse_Plugin\\runtime-EclipseApplication\\.metadata\\.plugins\\org.eclipse.m2e.logback\\logback.2.1.0.20221015-0744.xml",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 10:53:48 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.jface",
+         "message":"Keybinding conflicts occurred.  They may interfere with normal accelerator operation.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 10:53:55 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.egit.ui",
+         "message":"Warning: The environment variable HOME is not set. The following directory will be used to store the Git\r\nuser global configuration and to define the default location to store repositories: 'C:\\Users\\samin'. If this is\r\nnot correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and\r\nEGit might behave differently since they see different configuration options.\r\nThis warning can be switched off on the Team > Git > Confirmations and Warnings preference page.\r\n",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 10:54:02 PM",
+         "severity":"Error",
+         "plugin":"org.eclipse.ui",
+         "message":"Unhandled event loop exception",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 11:02:00 PM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Activated before the state location was initialized. Retry after the state location is initialized.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 11:02:00 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.core.resources",
+         "message":"The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 11:02:01 PM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Logback config file: H:\\NCSU Semesters\\Research_Eclipse_Plugin\\runtime-EclipseApplication\\.metadata\\.plugins\\org.eclipse.m2e.logback\\logback.2.1.0.20221015-0744.xml",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 11:02:02 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.jface",
+         "message":"Keybinding conflicts occurred.  They may interfere with normal accelerator operation.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 11:02:09 PM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.egit.ui",
+         "message":"Warning: The environment variable HOME is not set. The following directory will be used to store the Git\r\nuser global configuration and to define the default location to store repositories: 'C:\\Users\\samin'. If this is\r\nnot correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and\r\nEGit might behave differently since they see different configuration options.\r\nThis warning can be switched off on the Team > Git > Confirmations and Warnings preference page.\r\n",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Aug 31, 2023, 11:02:15 PM",
+         "severity":"Error",
+         "plugin":"org.eclipse.ui",
+         "message":"Unhandled event loop exception",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 12:14:03 AM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Activated before the state location was initialized. Retry after the state location is initialized.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 12:14:04 AM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.core.resources",
+         "message":"The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 12:14:04 AM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Logback config file: H:\\NCSU Semesters\\Research_Eclipse_Plugin\\runtime-EclipseApplication\\.metadata\\.plugins\\org.eclipse.m2e.logback\\logback.2.1.0.20221015-0744.xml",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 12:14:06 AM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.jface",
+         "message":"Keybinding conflicts occurred.  They may interfere with normal accelerator operation.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 12:14:12 AM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.egit.ui",
+         "message":"Warning: The environment variable HOME is not set. The following directory will be used to store the Git\r\nuser global configuration and to define the default location to store repositories: 'C:\\Users\\samin'. If this is\r\nnot correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and\r\nEGit might behave differently since they see different configuration options.\r\nThis warning can be switched off on the Team > Git > Confirmations and Warnings preference page.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:31:17 AM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Activated before the state location was initialized. Retry after the state location is initialized.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:31:18 AM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.core.resources",
+         "message":"The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:31:18 AM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Logback config file: H:\\NCSU Semesters\\Research_Eclipse_Plugin\\runtime-EclipseApplication\\.metadata\\.plugins\\org.eclipse.m2e.logback\\logback.2.1.0.20221015-0744.xml",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:31:20 AM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.jface",
+         "message":"Keybinding conflicts occurred.  They may interfere with normal accelerator operation.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:31:26 AM",
+         "severity":"Error",
+         "plugin":"org.eclipse.jdt.core",
+         "message":"File not found: H:\\NCSU Semesters\\Research_Eclipse_Plugin\\runtime-EclipseApplication\\JavaProjectTest\\src\\module-info.java.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:31:27 AM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.egit.ui",
+         "message":"Warning: The environment variable HOME is not set. The following directory will be used to store the Git\r\nuser global configuration and to define the default location to store repositories: 'C:\\Users\\samin'. If this is\r\nnot correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and\r\nEGit might behave differently since they see different configuration options.\r\nThis warning can be switched off on the Team > Git > Confirmations and Warnings preference page.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:32:39 AM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Activated before the state location was initialized. Retry after the state location is initialized.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:32:39 AM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.core.resources",
+         "message":"The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:32:39 AM",
+         "severity":"Error",
+         "plugin":"org.eclipse.core.resources",
+         "message":"Workspace restored, but some problems occurred.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:32:40 AM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Logback config file: H:\\NCSU Semesters\\Research_Eclipse_Plugin\\runtime-EclipseApplication\\.metadata\\.plugins\\org.eclipse.m2e.logback\\logback.2.1.0.20221015-0744.xml",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:32:41 AM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.jface",
+         "message":"Keybinding conflicts occurred.  They may interfere with normal accelerator operation.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:32:47 AM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.egit.ui",
+         "message":"Warning: The environment variable HOME is not set. The following directory will be used to store the Git\r\nuser global configuration and to define the default location to store repositories: 'C:\\Users\\samin'. If this is\r\nnot correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and\r\nEGit might behave differently since they see different configuration options.\r\nThis warning can be switched off on the Team > Git > Confirmations and Warnings preference page.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:38:21 AM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Activated before the state location was initialized. Retry after the state location is initialized.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:38:22 AM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.core.resources",
+         "message":"The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:38:22 AM",
+         "severity":"Info",
+         "plugin":"ch.qos.logback.classic",
+         "message":"Logback config file: H:\\NCSU Semesters\\Research_Eclipse_Plugin\\runtime-EclipseApplication\\.metadata\\.plugins\\org.eclipse.m2e.logback\\logback.2.1.0.20221015-0744.xml",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:38:24 AM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.jface",
+         "message":"Keybinding conflicts occurred.  They may interfere with normal accelerator operation.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:38:29 AM",
+         "severity":"Error",
+         "plugin":"org.eclipse.ui",
+         "message":"Unable to create part",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      },
+      {
+         "date":"Sep 1, 2023, 1:38:31 AM",
+         "severity":"Warning",
+         "plugin":"org.eclipse.egit.ui",
+         "message":"Warning: The environment variable HOME is not set. The following directory will be used to store the Git\r\nuser global configuration and to define the default location to store repositories: 'C:\\Users\\samin'. If this is\r\nnot correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and\r\nEGit might behave differently since they see different configuration options.\r\nThis warning can be switched off on the Team > Git > Confirmations and Warnings preference page.",
+         "sessionInfo":"eclipse.buildId=4.26.0.20221201-1200\r\njava.version=17.0.4.1\r\njava.vendor=Oracle Corporation\r\nBootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US\r\nFramework arguments:  -product org.eclipse.epp.package.java.product\r\nCommand-line arguments:  -product org.eclipse.epp.package.java.product -data H:\\NCSU Semesters\\Research_Eclipse_Plugin\\PluginDevelopmentWorkspace/../runtime-EclipseApplication -dev file:H:/NCSU Semesters/Research_Eclipse_Plugin/PluginDevelopmentWorkspace/.metadata/.plugins/org.eclipse.pde.core/Eclipse Application/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog\r\n"
+      }
+   ],
+   "IPAddress":"192.168.1.203",
+   "MACAddress":"62-F2-62-5E-95-E8"
+}}

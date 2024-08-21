@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<!-- This XML file is part of the project authored by Saminur Islam and owned by Dr. Collin Lynch.
+     It is licensed under the terms of the GNU Affero General Public License (AGPL) version 3.0 or later. -->
+
+   <extension point="org.eclipse.ui.commands">
+      <category id="TestPluginProject.commands.category" name="Sample Category">
+      </category>
+      <command categoryId="TestPluginProject.commands.category" name="Sample Command" id="TestPluginProject.commands.consoleCommand">
+      </command>
+   </extension>
+   <extension point="org.eclipse.ui.bindings">
+      <key commandId="TestPluginProject.commands.consoleCommand" schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" contextId="org.eclipse.ui.contexts.window" sequence="M1+6">
+      </key>
+   </extension>
+   <extension point="org.eclipse.ui.startup">
+      <startup class="testpluginproject.Activator" id="TestPluginProject">
+      </startup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="testpluginproject.UserLogin"
+            id="tpp.userlogin"
+            name="CSC 216 Preferences">
+      </page>
+   </extension>
+</plugin>
+
