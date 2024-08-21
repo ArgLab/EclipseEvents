@@ -1,3 +1,4 @@
+[![License](https://img.shields.io/badge/License-AGPL--3.0--or--later-blue.svg)](https://github.com/ArgLab/EclipseEvents/blob/main/LICENSE.md)
 # EclipseEvents
 Real-Time Plugin for Eclipse Event Tracking.
 
