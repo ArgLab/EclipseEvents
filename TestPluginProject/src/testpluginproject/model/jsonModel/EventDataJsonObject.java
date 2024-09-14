@@ -27,6 +27,12 @@ public class EventDataJsonObject {
 	private String IPAddress;
 	private String MACAddress;
 	private String PluginVersion;
+	private String osName;
+	private String osVersion;
+	private String osArch;
+	private String javaVersion;
+	private String javaVendor;
+	private String eclipseVersion;
 	
 	public EventDataJsonObject(List<SequentialEventData> sequentialEventData,List<WorkSpaceLog> errorLogList) {
 		this.errorLogList = errorLogList;
@@ -75,6 +81,21 @@ public class EventDataJsonObject {
 
 	public void setMACAddress(String mACAddress) {
 		MACAddress = mACAddress;
+	}
+	
+	public void setOSInfo(String osName, String osVersion, String osArch) {
+		this.osName = osName;
+		this.osVersion = osVersion;
+		this.osArch = osArch;
+	}
+	
+	public void setJavaInfo(String javaVersion, String javaVendor) {
+		this.javaVersion = javaVersion;
+		this.javaVendor = javaVendor;
+	}
+	
+	public void setEclipseInfo(String eclipseVersion) {
+		this.eclipseVersion = eclipseVersion;
 	}
 
 

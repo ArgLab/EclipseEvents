@@ -65,6 +65,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -80,7 +81,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.internal.Platform;
+//import org.eclipse.swt.internal.Platform;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -581,6 +582,19 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 				}
 			}
 		});
+		
+		//Getting OS Version
+		String osName = System.getProperty("os.name");
+		String osVersion = System.getProperty("os.version");
+		String osArch = System.getProperty("os.arch");
+		
+		//Getting Java Version
+		String javaVersion = System.getProperty("java.version");
+		String javaVendor = System.getProperty("java.vendor");
+		
+		//Getting Eclipse Version
+		String eclipseVersion = Platform.getBundle("org.eclipse.core.runtime").getVersion().toString();
+		
 		List<SequentialEventData> mousEventList = new ArrayList<>();
 		List<SequentialEventData> keyEvents = new ArrayList<>();
 		if(mouseClickListener!=null) {
@@ -600,13 +614,17 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		
 		
 		
-		//sort based ont he event time
+		//sort based on the event time
 		Collections.sort(listSequntialevents, new EventTimeComparator());
 		
 		EventDataJsonObject edjo = new EventDataJsonObject(listSequntialevents,errorLogList);
+//		System.out.println("EDJO"+edjo);
 		edjo.setIPAddress(Utils.getIpAddress());
 		edjo.setMACAddress(Utils.getMacAddress());
 		edjo.setPluginVersion("V1.0.1");
+		edjo.setOSInfo(osName, osVersion, osArch);
+		edjo.setJavaInfo(javaVersion, javaVendor);
+		edjo.setEclipseInfo(eclipseVersion);
 		System.out.println("retrived key would be: ");
 		//System.out.println(retriveKey());
 		//Save as json
