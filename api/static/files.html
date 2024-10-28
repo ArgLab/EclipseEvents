@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Files</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin: 8px 0;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .error-message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h2>Available Files</h2>
+    <ul id="filesList">
+        <!-- List of files will appear here -->
+    </ul>
+    <p class="error-message" id="errorMessage"></p>
+
+    <script>
+        // Get the token from localStorage
+        const token = localStorage.getItem('token');
+        const errorMessage = document.getElementById('errorMessage');
+        const filesList = document.getElementById('filesList');
+
+        // Fetch the list of files from the /files endpoint
+        async function fetchFiles() {
+            try {
+                // Clear any previous errors
+                errorMessage.textContent = '';
+
+                // Make the API request to get the files
+                const response = await fetch('https://lurch.csc.ncsu.edu/files', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                // If the request fails (401, 403, etc.), show an error
+                if (!response.ok) {
+                    throw new Error('Failed to fetch files. Please check your authentication.');
+                }
+
+                const files = await response.json();
+
+                // Display the files in the list
+                filesList.innerHTML = '';
+                files.forEach(file => {
+                    const listItem = document.createElement('li');
+                    const downloadButton = document.createElement('button');
+                    downloadButton.textContent = `Download ${file}`;
+
+                    // Set up the click event for the download button
+                    downloadButton.addEventListener('click', () => {
+                        downloadFile(file);
+                    });
+
+                    listItem.appendChild(downloadButton);
+                    filesList.appendChild(listItem);
+                });
+
+            } catch (error) {
+                errorMessage.textContent = error.message;
+            }
+        }
+
+        function downloadFile(filename) {
+            fetch(`https://lurch.csc.ncsu.edu/download/${filename}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to download file. Please check your authentication.');
+                }
+                return response.blob();  // Convert response to a Blob
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);  // Create an object URL for the Blob
+                const a = document.createElement('a');  // Create a temporary anchor element
+                a.href = url;
+                a.download = filename;  // Set the download attribute with the filename
+                document.body.appendChild(a);
+                a.click();  // Trigger the download
+                a.remove();  // Clean up
+                window.URL.revokeObjectURL(url);  // Revoke the object URL
+            })
+            .catch(error => {
+                errorMessage.textContent = error.message;
+            });
+        }
+
+        // Call the fetchFiles function on page load
+        window.onload = fetchFiles;
+    </script>
+</body>
+</html>

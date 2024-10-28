@@ -1,0 +1,18 @@
+
+[Unit]
+Description=CodeEvent Server data collector
+After=multi-user.target
+Conflicts=getty@tty1.service
+StartLimitIntervalSec=500
+#StartLimitBurst=5 
+[Service]
+Restart=always
+RestartSec=10s
+RuntimeMaxSec=1d
+Type=simple
+ExecStart=/usr/bin/python3 -u  /usr/local/share/PythonServer/file_receive.py
+StandardInput=tty-force
+StandardOutput=journal
+ 
+[Install]
+WantedBy=multi-user.target

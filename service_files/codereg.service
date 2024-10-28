@@ -1,0 +1,16 @@
+[Unit]
+Description=CodeEvent Server Register
+After=multi-user.target
+Conflicts=getty@tty1.service
+StartLimitIntervalSec=0
+#StartLimitBurst=5
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=10s
+ExecStart=/usr/bin/python3 -u /usr/local/share/PythonServer/register.py
+StandardInput=tty-force
+StandardOutput=journal
+ 
+[Install]
+WantedBy=multi-user.target
