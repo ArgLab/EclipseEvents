@@ -21,9 +21,12 @@ import testpluginproject.model.jsonModel.SequentialEventData;
 
 public class LoggerResourceChangeListener implements IResourceChangeListener {
 	
+	KeyBoardClickListener keyBoardClickListener;
+	
 
-    public LoggerResourceChangeListener() {
+    public LoggerResourceChangeListener(KeyBoardClickListener keyBoardClickListener) {
 		super();
+		this.keyBoardClickListener = keyBoardClickListener;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -61,6 +64,7 @@ public class LoggerResourceChangeListener implements IResourceChangeListener {
 
         @Override
         public boolean visit(IResourceDelta delta) {
+        	keyBoardClickListener.immediateSave();
         	SequentialEventData sed = null;
         	boolean defined = false;
         	if (delta.getKind() == IResourceDelta.ADDED) {

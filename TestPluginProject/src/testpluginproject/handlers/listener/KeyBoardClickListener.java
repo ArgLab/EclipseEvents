@@ -114,6 +114,13 @@ public class KeyBoardClickListener implements KeyListener,Listener{
 		}, 5000);
 		
 	}
+	
+	public void immediateSave() {
+		System.out.println("Immediate save");
+		if(this.KeyBoardClickEvents.toString().length()!=0) {
+			processKeyboardEvents();
+		}
+	}
 	private void processKeyboardEvents() {
 		// TODO Auto-generated method stub
 		SequentialEventData seDKB = new SequentialEventData("KeyBoardClickEvent", this.KeyBoardClickEvents.toString());

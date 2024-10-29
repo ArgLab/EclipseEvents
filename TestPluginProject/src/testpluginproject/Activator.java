@@ -179,7 +179,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		retriveKey();
 		plugin = this;
 		
-		LoggerResourceChangeListener listener = new LoggerResourceChangeListener();
+		LoggerResourceChangeListener listener = new LoggerResourceChangeListener(keyBoardClickListener);
         ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
         
      // Initialize and start the file system watcher
@@ -728,6 +728,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 			//System.out.println("Console Output Data: "+consoleOutput);
 			//System.out.println("MenubarClick Data: "+MenuBarClickActions);
 //			System.out.println("WorkSpaceErrorLog Data: "+errorLogList);
+			keyBoardClickListener.immediateSave();
 			Map<String, String> parameters = new HashMap<>();
 			String [] commandStr = commandId.split("\\.");
 			String activePart = commandStr[commandStr.length-2];
@@ -845,12 +846,12 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 	private void addSelectionListener(IWorkbenchWindow window) {
 		
 		if (window != null) {
-			mouseClickListener = new MouseClickListener(window);
 			keyBoardClickListener = new KeyBoardClickListener();
+			mouseClickListener = new MouseClickListener(window, keyBoardClickListener);
 			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.MouseDown, mouseClickListener);
 			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.MouseDoubleClick,mouseClickListener);
 			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.KeyDown, keyBoardClickListener);			
-			window.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new WindowClickListener(listSequntialevents,window));
+			window.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new WindowClickListener(listSequntialevents,window,keyBoardClickListener));
 
 		}
 

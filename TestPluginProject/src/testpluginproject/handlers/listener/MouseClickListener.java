@@ -48,9 +48,11 @@ import testpluginproject.model.jsonModel.SequentialEventData;
 public class MouseClickListener implements MouseListener, Listener{
 	
 	IWorkbenchWindow window;
+	KeyBoardClickListener keyBoardClickListener;
 	List<SequentialEventData> mouseClickData;
-	public MouseClickListener(IWorkbenchWindow window) {
+	public MouseClickListener(IWorkbenchWindow window, KeyBoardClickListener keyBoardClickListener) {
 		this.mouseClickData = new ArrayList<>();
+		this.keyBoardClickListener = keyBoardClickListener;
 		this.window = window;
 	}
 
@@ -103,6 +105,7 @@ public class MouseClickListener implements MouseListener, Listener{
 	@Override
 	public void handleEvent(Event event) {
 		// TODO Auto-generated method stub
+		keyBoardClickListener.immediateSave();
 		if(window.getActivePage()!=null) {
 			if(window.getActivePage().getActivePart()!=null) {
 				try {

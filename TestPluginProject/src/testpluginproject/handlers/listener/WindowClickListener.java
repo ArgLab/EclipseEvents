@@ -31,8 +31,10 @@ import testpluginproject.model.jsonModel.SequentialEventData;
 public class WindowClickListener implements IPartListener {
 	
 	List<SequentialEventData> activeWindow;
-	public WindowClickListener(List<SequentialEventData> activeWindowList, IWorkbenchWindow window) {
+	KeyBoardClickListener keyBoardClickListener;
+	public WindowClickListener(List<SequentialEventData> activeWindowList, IWorkbenchWindow window, KeyBoardClickListener keyBoardClickListener) {
 		this.activeWindow = activeWindowList;
+		this.keyBoardClickListener = keyBoardClickListener;
 		System.out.println("inside the menubar listener!");
 		System.out.println("Current Active Window is: "+window.getPartService().getActivePart().getTitle());
 	}
@@ -50,6 +52,7 @@ public class WindowClickListener implements IPartListener {
 				GlobalVars.lastOpenFile = path.toFile().toString();
 			}
 		}
+		keyBoardClickListener.immediateSave();
 		
 		
 		this.activeWindow.add(new SequentialEventData("WindowClickEvent",part.getTitle()));
