@@ -179,7 +179,8 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		retriveKey();
 		plugin = this;
 		
-		LoggerResourceChangeListener listener = new LoggerResourceChangeListener(keyBoardClickListener);
+//		LoggerResourceChangeListener listener = new LoggerResourceChangeListener(keyBoardClickListener);
+		LoggerResourceChangeListener listener = new LoggerResourceChangeListener();
         ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
         
      // Initialize and start the file system watcher

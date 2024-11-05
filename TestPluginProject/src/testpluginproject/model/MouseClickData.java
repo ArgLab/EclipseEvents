@@ -24,7 +24,7 @@ public class MouseClickData {
 		this.fileName = fileName;
 		this.time = dateFormat.format(new Date());
 		this.Line = Line;
-		this.CharOffset = CharOffset;
+		this.CharOffset = charOffset;
 		
 		this.username = Utils.getUsernameFromPref();
 	}
