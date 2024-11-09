@@ -25,8 +25,9 @@ public class KeyBoardClickData {
 
 	@Override
 	public String toString() {
-		return "KeyBoardClickData [contents=" + contents + "]";
+		return "KeyBoardClickData [contents=" + contents + ", username=" + username + "]";
 	}
+
 	
 
 }

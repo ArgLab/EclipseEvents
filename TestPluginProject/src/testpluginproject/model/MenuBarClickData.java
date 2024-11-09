@@ -37,8 +37,10 @@ public class MenuBarClickData {
 	}
 	@Override
 	public String toString() {
-		return "MenuBarClickData [clikedMenuBar=" + clikedMenuBar + ", eventTime=" + eventTime + "]";
+		return "MenuBarClickData [clikedMenuBar=" + clikedMenuBar + ", eventTime=" + eventTime + ", username="
+				+ username + "]";
 	}
+	
 	
 	
 

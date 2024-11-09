@@ -31,8 +31,10 @@ public class CurrentWindowClickData {
 
 	@Override
 	public String toString() {
-		return "CurrentWindowClickData [activeWindow=" + activeWindow + ", eventTime=" + eventTime + "]";
+		return "CurrentWindowClickData [activeWindow=" + activeWindow + ", eventTime=" + eventTime + ", username="
+				+ username + "]";
 	}
+
 	
 	
 

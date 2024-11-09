@@ -30,6 +30,12 @@ public class ResourceChangeData {
 	public void setFileAffected(String fileAffected) {
 		FileAffected = fileAffected;
 	}
+
+	
+	@Override
+	public String toString() {
+		return "ResourceChangeData [FileAffected=" + FileAffected + ", code=" + code + ", username=" + username + "]";
+	}
 	
 	
 

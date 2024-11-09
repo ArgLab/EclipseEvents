@@ -6,6 +6,8 @@ package testpluginproject.model;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import testpluginproject.utils.Utils;
+
 public class FileStateModel {
 
 	private String ProjectName;
@@ -13,6 +15,7 @@ public class FileStateModel {
 	private String fileName;
 	private String content;
 	private String time;
+	private String username;
 	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
 	public FileStateModel(String ProjectName, String packageName, String fileName, String content) {
@@ -21,6 +24,7 @@ public class FileStateModel {
 		this.fileName = fileName;
 		this.content = content;
 		this.time = dateFormat.format(new Date());
+		this.username = Utils.getUsernameFromPref();
 	}
 
 	public String getProjectName() {
@@ -58,8 +62,10 @@ public class FileStateModel {
 	@Override
 	public String toString() {
 		return "FileStateModel [ProjectName=" + ProjectName + ", packageName=" + packageName + ", fileName=" + fileName
-				+ ", content=" + content + ", time=" + time + "]";
+				+ ", content=" + content + ", time=" + time + ", username=" + username + "]";
 	}
+
+	
 	
 	
 

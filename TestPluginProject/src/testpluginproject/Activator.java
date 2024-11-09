@@ -53,6 +53,8 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -70,6 +72,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
@@ -78,6 +85,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -129,6 +137,8 @@ import testpluginproject.handlers.listener.LoggerResourceChangeListener;
 import testpluginproject.handlers.listener.MouseClickListener;
 //import testpluginproject.handlers.listener.ViewSelectionListener;
 import testpluginproject.handlers.listener.WindowClickListener;
+import testpluginproject.handlers.listener.PopupWindowListener;
+import testpluginproject.model.ProjectExplorerModel;
 import testpluginproject.model.UserActionData;
 import testpluginproject.model.WorkSpaceLog;
 import testpluginproject.model.jsonModel.EventDataJsonObject;
@@ -182,7 +192,9 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 //		LoggerResourceChangeListener listener = new LoggerResourceChangeListener(keyBoardClickListener);
 		LoggerResourceChangeListener listener = new LoggerResourceChangeListener();
         ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
-        
+  
+        PopupWindowListener pwl = new PopupWindowListener();
+        pwl.trackPopupWindows();
      // Initialize and start the file system watcher
         startFileSystemWatcher();
 	}
@@ -430,14 +442,20 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 			@Override
 			public void windowOpened(IWorkbenchWindow window) {
 				// TODO Auto-generated method stub
+				System.out.println("Current Active window: "+window.getActivePage().getLabel());
 				addSelectionListener(window);
 
 			}
 
 			@Override
-			public void windowDeactivated(IWorkbenchWindow arg0) {
+			public void windowDeactivated(IWorkbenchWindow window) {
 				// TODO Auto-generated method stub
 				System.out.println("window got deactivated at time." + new Date().toString());
+				System.out.println("activated window: "+window.getWorkbench().getActiveWorkbenchWindow().getPages().getClass().getName());
+				String window_Name = window.getWorkbench().getActiveWorkbenchWindow().getPages().getClass().getName(); 
+				//System.out.println("Time to get activated the window. "+new Date().toString());
+				SequentialEventData sed = new SequentialEventData("Window Deactivated", window_Name);
+				listSequntialevents.add(sed);
 				//could capture the event of idle So we can calculate that
 
 			}
@@ -453,9 +471,13 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 			}
 
 			@Override
-			public void windowActivated(IWorkbenchWindow arg0) {
+			public void windowActivated(IWorkbenchWindow window) {
 				// TODO Auto-generated method stub
-				System.out.println("Time to get activated the window. "+new Date().toString());
+				System.out.println("activated window: "+window.getWorkbench().getActiveWorkbenchWindow().getPages().getClass().getName());
+				String window_Name = window.getWorkbench().getActiveWorkbenchWindow().getPages().getClass().getName(); 
+				//System.out.println("Time to get activated the window. "+new Date().toString());
+				SequentialEventData sed = new SequentialEventData("Window Activated", window_Name);
+				listSequntialevents.add(sed);
 
 			}
 		});
@@ -829,7 +851,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 				System.out.println("Selected Text: " + deletedText);
 				UserActionData uad = new UserActionData(deletedText, GlobalVars.lastOpenFile,
 						GlobalVars.activeProject);
-				SequentialEventData menuDelete= new SequentialEventData("selectAll", uad);
+				SequentialEventData menuDelete= new SequentialEventData("Delete", uad);
 				listSequntialevents.add(menuDelete);
 				System.out.println(uad);
 			}
@@ -851,13 +873,148 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 			mouseClickListener = new MouseClickListener(window, keyBoardClickListener);
 			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.MouseDown, mouseClickListener);
 			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.MouseDoubleClick,mouseClickListener);
-			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.KeyDown, keyBoardClickListener);			
+			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.KeyDown, keyBoardClickListener);	
+			window.getSelectionService().addSelectionListener(new ISelectionListener() {
+	            @Override
+	            public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+	                handleSelectionChange(part, selection);
+	            }
+	        });
 			window.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new WindowClickListener(listSequntialevents,window,keyBoardClickListener));
 
 		}
 
 	}
 
+	private void handleSelectionChange(IWorkbenchPart part, ISelection selection) {
+		// TODO Auto-generated method stub
+		System.out.println("Selection Happened in: "+part.getTitle());
+		 // Handle structured selections like those from the Project Explorer
+		if (selection instanceof IStructuredSelection) {
+		    IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+		    Object selectedElement = structuredSelection.getFirstElement();
+
+		    if (selectedElement == null) {
+		        System.out.println("No element selected.");
+		        return;
+		    }
+
+		    // Check if the element is a Project
+		    if (selectedElement instanceof IProject) {
+		        IProject project = (IProject) selectedElement;
+		        if (project != null) {
+		            System.out.println("Project Explorer > Project selected: " + project.getName());
+		            ProjectExplorerModel pem = new ProjectExplorerModel();
+		            pem.setMouseClick(project.getName());
+		            pem.setPathClick(project.getName());
+		            SequentialEventData sed = new SequentialEventData("MouseClick Project Explorer", pem);
+		            listSequntialevents.add(sed);
+		        }
+		    } 
+		    // Check if the element is a Folder
+		    else if (selectedElement instanceof IFolder) {
+		        IFolder folder = (IFolder) selectedElement;
+		        if (folder != null) {
+		            String projectName = folder.getProject() != null ? folder.getProject().getName() : "Unknown project";
+		            ProjectExplorerModel pem = new ProjectExplorerModel();
+		            pem.setMouseClick(folder.getName());
+		            pem.setPathClick(projectName);
+		            SequentialEventData sed = new SequentialEventData("MouseClick Project Explorer", pem);
+		            listSequntialevents.add(sed);
+		            System.out.println("Project Explorer > Project: " + projectName + " > Folder selected: " + folder.getName());
+		        }
+		    } 
+		    // Check if the element is a File
+		    else if (selectedElement instanceof IFile) {
+		        IFile file = (IFile) selectedElement;
+		        if (file != null) {
+		            String projectName = file.getProject() != null ? file.getProject().getName() : "Unknown project";
+		            System.out.println("Project Explorer > Project: " + projectName + " > File selected: " + file.getName());
+		            ProjectExplorerModel pem = new ProjectExplorerModel();
+		            pem.setMouseClick(file.getName());
+		            pem.setPathClick(projectName);
+		            SequentialEventData sed = new SequentialEventData("MouseClick Project Explorer", pem);
+		            listSequntialevents.add(sed);
+		        }
+		    } 
+		    // Check for Java-specific elements (e.g., Package or Class elements in Project Explorer)
+		    else if (selectedElement instanceof org.eclipse.jdt.core.IPackageFragment) {
+		        org.eclipse.jdt.core.IPackageFragment pkg = (org.eclipse.jdt.core.IPackageFragment) selectedElement;
+		        String projectName = pkg.getJavaProject() != null ? pkg.getJavaProject().getElementName() : "Unknown project";
+		        System.out.println("Project Explorer > Project: " + projectName + " > Package selected: " + pkg.getElementName());
+		        ProjectExplorerModel pem = new ProjectExplorerModel();
+	            pem.setMouseClick(pkg.getElementName());
+	            pem.setPathClick(projectName);
+	            SequentialEventData sed = new SequentialEventData("MouseClick Project Explorer", pem);
+	            listSequntialevents.add(sed);
+		    }
+		    else if (selectedElement instanceof org.eclipse.jdt.core.IPackageFragmentRoot) {
+		        org.eclipse.jdt.core.IPackageFragmentRoot pkgRoot = (org.eclipse.jdt.core.IPackageFragmentRoot) selectedElement;
+		        String projectName = pkgRoot.getJavaProject() != null ? pkgRoot.getJavaProject().getElementName() : "Unknown project";
+		        System.out.println("Project Explorer > Project: " + projectName + " > Source/Library root selected: " + pkgRoot.getElementName());
+		        ProjectExplorerModel pem = new ProjectExplorerModel();
+	            pem.setMouseClick(pkgRoot.getElementName());
+	            pem.setPathClick(projectName);
+	            SequentialEventData sed = new SequentialEventData("MouseClick Project Explorer", pem);
+	            listSequntialevents.add(sed);
+		    }
+		    else if (selectedElement instanceof IJavaElement) {
+		    	IJavaElement javaElement = (IJavaElement) selectedElement;
+		    	IProject project = javaElement.getJavaProject().getProject();
+		        System.out.println("Project Explorer > Project: " + project.getName());
+
+		        // Retrieve the package fragment if it exists
+		        IPackageFragment packageFragment = (IPackageFragment) javaElement.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
+		        if (packageFragment != null) {
+		            System.out.println("Project Explorer > Project: " + project.getName() +
+		                               " > Package: " + packageFragment.getElementName());
+		        }
+
+		        // Retrieve the package fragment root (source folder or library root) if it exists
+		        IPackageFragmentRoot packageFragmentRoot = (IPackageFragmentRoot) javaElement.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+		        if (packageFragmentRoot != null) {
+		            System.out.println("Project Explorer > Project: " + project.getName() +
+		                               " > Source/Library root: " + packageFragmentRoot.getElementName());
+		        }
+
+		        // Handle file-level elements, such as compilation units (Java files)
+		        if (javaElement instanceof ICompilationUnit) {
+		            ICompilationUnit compilationUnit = (ICompilationUnit) javaElement;
+		            System.out.println("Project Explorer > Project: " + project.getName() +
+		                               " > Source/Library root: " + (packageFragmentRoot != null ? packageFragmentRoot.getElementName() : "Unknown root") +
+		                               " > Package: " + (packageFragment != null ? packageFragment.getElementName() : "Unknown package") +
+		                               " > File: " + compilationUnit.getElementName());
+		            
+		            ProjectExplorerModel pem = new ProjectExplorerModel();
+		            pem.setMouseClick(compilationUnit.getElementName());
+		            pem.setPathClick(project.getName());
+		            SequentialEventData sed = new SequentialEventData("MouseClick Project Explorer", pem);
+		            listSequntialevents.add(sed); 
+		        } else {
+		        	ProjectExplorerModel pem = new ProjectExplorerModel();
+		            pem.setMouseClick(javaElement.getElementName());
+		            pem.setPathClick(project.getName());
+		            SequentialEventData sed = new SequentialEventData("MouseClick Project Explorer", pem);
+		            listSequntialevents.add(sed); 
+		            System.out.println("Selected element is a Java element but not a compilation unit: " + javaElement.getElementName());
+		        }
+		    }
+		    // Log the class type of unknown elements
+		    else {
+		    	ProjectExplorerModel pem = new ProjectExplorerModel();
+	            pem.setMouseClick(selectedElement.toString());
+	            pem.setPathClick("Unknown");
+	            SequentialEventData sed = new SequentialEventData("MouseClick Project Explorer", pem);
+	            listSequntialevents.add(sed); 
+		        System.out.println("Project Explorer > Unknown element selected of type: " + selectedElement.toString());
+		    }
+		} else {
+		    System.out.println("Selection is not an instance of IStructuredSelection or is null.");
+		}
+
+		System.out.println();
+	}
+	
 	private void removeSelectionListener(IWorkbenchWindow window) {
 		System.out.println("Inside the remove selection listeners");
 		try {
