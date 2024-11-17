@@ -869,7 +869,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 	private void addSelectionListener(IWorkbenchWindow window) {
 		
 		if (window != null) {
-			keyBoardClickListener = new KeyBoardClickListener();
+			keyBoardClickListener = new KeyBoardClickListener(window);
 			mouseClickListener = new MouseClickListener(window, keyBoardClickListener);
 			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.MouseDown, mouseClickListener);
 			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.MouseDoubleClick,mouseClickListener);

@@ -15,6 +15,7 @@ import java.util.TimerTask;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.IWorkbenchWindow;
 
 import testpluginproject.model.KeyBoardClickData;
 import testpluginproject.model.jsonModel.SequentialEventData;
@@ -22,11 +23,14 @@ import testpluginproject.model.jsonModel.SequentialEventData;
 public class KeyBoardClickListener implements KeyListener,Listener{
 	
 	public StringBuilder KeyBoardClickEvents;
-	List<SequentialEventData> keboardClickData;
+	List<SequentialEventData> keyboardClickData;
+	IWorkbenchWindow window;
+	
 	Timer timer = new Timer();
-	public KeyBoardClickListener() {
-		this.keboardClickData = new ArrayList<>();
+	public KeyBoardClickListener(IWorkbenchWindow window) {
+		this.keyboardClickData = new ArrayList<>();
 		KeyBoardClickEvents = new StringBuilder();
+		this.window = window;
 	}
 
 	
@@ -41,12 +45,12 @@ public class KeyBoardClickListener implements KeyListener,Listener{
 
 
 	public List<SequentialEventData> getKeboardClickData() {
-		return keboardClickData;
+		return keyboardClickData;
 	}
 
 
 	public void setKeboardClickData(List<SequentialEventData> keboardClickData) {
-		this.keboardClickData = keboardClickData;
+		this.keyboardClickData = keboardClickData;
 	}
 
 
@@ -123,8 +127,18 @@ public class KeyBoardClickListener implements KeyListener,Listener{
 	}
 	private void processKeyboardEvents() {
 		// TODO Auto-generated method stub
-		SequentialEventData seDKB = new SequentialEventData("KeyBoardClickEvent", this.KeyBoardClickEvents.toString());
-		keboardClickData.add(seDKB);
+		String windowName = null;
+		if(window.getActivePage()!=null) {
+			if(window.getActivePage().getActivePart()!=null) {
+				if(window.getActivePage().getActivePart().getTitle()!=null) {
+					windowName = window.getActivePage().getActivePart().getTitle();
+				}
+			}
+		}
+		
+		KeyBoardClickData kcd = new KeyBoardClickData(windowName, this.KeyBoardClickEvents.toString());
+		SequentialEventData seDKB = new SequentialEventData("KeyBoardClickEvent", kcd);
+		keyboardClickData.add(seDKB);
 		this.KeyBoardClickEvents = new StringBuilder();
 		
 	}
