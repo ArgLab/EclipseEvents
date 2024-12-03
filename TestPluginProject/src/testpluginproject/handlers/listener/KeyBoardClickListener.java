@@ -115,6 +115,7 @@ public class KeyBoardClickListener implements KeyListener,Listener{
 		
 	}
 	
+	//Immediately save whatever is in the buffer
 	public void immediateSave() {
 		System.out.println("Immediate save");
 		if(this.KeyBoardClickEvents.toString().length()!=0) {

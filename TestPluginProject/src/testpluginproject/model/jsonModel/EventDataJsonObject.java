@@ -27,6 +27,7 @@ public class EventDataJsonObject {
 	private String IPAddress;
 	private String MACAddress;
 	private String PluginVersion;
+	//Get additional info about OS, Java and Eclipse
 	private String osName;
 	private String osVersion;
 	private String osArch;
@@ -83,17 +84,20 @@ public class EventDataJsonObject {
 		MACAddress = mACAddress;
 	}
 	
+	//OS info
 	public void setOSInfo(String osName, String osVersion, String osArch) {
 		this.osName = osName;
 		this.osVersion = osVersion;
 		this.osArch = osArch;
 	}
 	
+	//Java info
 	public void setJavaInfo(String javaVersion, String javaVendor) {
 		this.javaVersion = javaVersion;
 		this.javaVendor = javaVendor;
 	}
 	
+	//Eclipse info
 	public void setEclipseInfo(String eclipseVersion) {
 		this.eclipseVersion = eclipseVersion;
 	}

@@ -24,6 +24,7 @@ public class MouseClickData {
 		this.fileName = fileName;
 		this.time = dateFormat.format(new Date());
 		this.Line = Line;
+		// Variable name was causing issue of offset not registering
 		this.CharOffset = charOffset;
 		
 		this.username = Utils.getUsernameFromPref();

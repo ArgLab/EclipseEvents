@@ -31,10 +31,10 @@ import testpluginproject.model.jsonModel.SequentialEventData;
 public class WindowClickListener implements IPartListener {
 	
 	List<SequentialEventData> activeWindow;
-	KeyBoardClickListener keyBoardClickListener;
+	KeyBoardClickListener keyBoardClickListener; //Create a local variable for keyboard buffer
 	public WindowClickListener(List<SequentialEventData> activeWindowList, IWorkbenchWindow window, KeyBoardClickListener keyBoardClickListener) {
 		this.activeWindow = activeWindowList;
-		this.keyBoardClickListener = keyBoardClickListener;
+		this.keyBoardClickListener = keyBoardClickListener; //Save keyboard buffer to a local variable
 		System.out.println("inside the menubar listener!");
 		System.out.println("Current Active Window is: "+window.getPartService().getActivePart().getTitle());
 	}
@@ -52,7 +52,7 @@ public class WindowClickListener implements IPartListener {
 				GlobalVars.lastOpenFile = path.toFile().toString();
 			}
 		}
-		keyBoardClickListener.immediateSave();
+		keyBoardClickListener.immediateSave(); //Immediate save after window switch
 		
 		
 		this.activeWindow.add(new SequentialEventData("WindowClickEvent",part.getTitle()));

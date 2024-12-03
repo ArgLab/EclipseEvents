@@ -65,7 +65,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Platform; //Required for getting OS and other info
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -81,7 +81,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
-//import org.eclipse.swt.internal.Platform;
+//import org.eclipse.swt.internal.Platform;  //Was causing conflict with org.eclipse.core.runtime.Platform
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -179,7 +179,6 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		retriveKey();
 		plugin = this;
 		
-//		LoggerResourceChangeListener listener = new LoggerResourceChangeListener(keyBoardClickListener);
 		LoggerResourceChangeListener listener = new LoggerResourceChangeListener();
         ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
         
@@ -623,6 +622,8 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		edjo.setIPAddress(Utils.getIpAddress());
 		edjo.setMACAddress(Utils.getMacAddress());
 		edjo.setPluginVersion("V1.0.1");
+		
+		//Save OS, Java and Eclipse version info
 		edjo.setOSInfo(osName, osVersion, osArch);
 		edjo.setJavaInfo(javaVersion, javaVendor);
 		edjo.setEclipseInfo(eclipseVersion);
@@ -729,7 +730,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 			//System.out.println("Console Output Data: "+consoleOutput);
 			//System.out.println("MenubarClick Data: "+MenuBarClickActions);
 //			System.out.println("WorkSpaceErrorLog Data: "+errorLogList);
-			keyBoardClickListener.immediateSave();
+			keyBoardClickListener.immediateSave(); //Immediate save after some action e.g. cut, copy, paste, etc
 			Map<String, String> parameters = new HashMap<>();
 			String [] commandStr = commandId.split("\\.");
 			String activePart = commandStr[commandStr.length-2];
@@ -848,11 +849,11 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		
 		if (window != null) {
 			keyBoardClickListener = new KeyBoardClickListener();
-			mouseClickListener = new MouseClickListener(window, keyBoardClickListener);
+			mouseClickListener = new MouseClickListener(window, keyBoardClickListener); //Passes keyBoardClickListner info into mouse click for immediate save
 			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.MouseDown, mouseClickListener);
 			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.MouseDoubleClick,mouseClickListener);
 			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.KeyDown, keyBoardClickListener);			
-			window.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new WindowClickListener(listSequntialevents,window,keyBoardClickListener));
+			window.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new WindowClickListener(listSequntialevents,window,keyBoardClickListener)); //Passes keyBoardClickListner info into window change for immediate save
 
 		}
 

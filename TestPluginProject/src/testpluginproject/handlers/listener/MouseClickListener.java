@@ -50,6 +50,7 @@ public class MouseClickListener implements MouseListener, Listener{
 	IWorkbenchWindow window;
 	KeyBoardClickListener keyBoardClickListener;
 	List<SequentialEventData> mouseClickData;
+	//Get keyboard buffer and create a local variable
 	public MouseClickListener(IWorkbenchWindow window, KeyBoardClickListener keyBoardClickListener) {
 		this.mouseClickData = new ArrayList<>();
 		this.keyBoardClickListener = keyBoardClickListener;
@@ -105,7 +106,7 @@ public class MouseClickListener implements MouseListener, Listener{
 	@Override
 	public void handleEvent(Event event) {
 		// TODO Auto-generated method stub
-		keyBoardClickListener.immediateSave();
+		keyBoardClickListener.immediateSave(); //Immediate save keyboard buffer after mouse click
 		if(window.getActivePage()!=null) {
 			if(window.getActivePage().getActivePart()!=null) {
 				try {
