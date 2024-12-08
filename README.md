@@ -53,3 +53,15 @@ To create and run Eclipse plugins, you need to install the PDE in your Eclipse I
       - Go to `Run Configurations`.
       - Select Eclipse Application as the runtime configuration.
 5. Run the project! 🎉
+
+## 🛠️ Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to get started.
+
+## 📄 License
+This project is licensed under the AGPL-3.0-or-later.
+
+## 📫 Contact
+For questions or support, reach out via the [issues page](https://github.com/ArgLab/EclipseEvents/issues).
+
+
