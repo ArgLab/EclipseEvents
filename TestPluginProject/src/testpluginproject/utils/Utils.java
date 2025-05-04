@@ -15,10 +15,14 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 public class Utils {
 	
 	public static String getUsernameFromPref() {
-		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode("csc216.plugin.prefs.page");
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode("csc.plugin.prefs.page");
 		//deal with ill formatted usernames
 		String username = preferences.get("USERNAME", "default").toLowerCase();
 		String email = preferences.get("EMAIL", "default").toLowerCase();
+		String semester = preferences.get("SEMESTER", "default");
+		String course = preferences.get("COURSE", "default");
+		String section = preferences.get("SECTION", "default");
+		System.out.print(semester+" "+course+" "+section);
 		if(email.contains("@ncsu.edu")) {
 			if(email.replace("@ncsu.edu", "").equals(username)) {
 				// They match, we can just move on
