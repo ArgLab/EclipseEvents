@@ -41,6 +41,7 @@ public class WindowClickListener implements IPartListener {
 				GlobalVars.lastOpenFile = path.toFile().toString();
 			}
 		}
+		System.out.println("Windows");
 		keyBoardClickListener.immediateSave();
 		
 		

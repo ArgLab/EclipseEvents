@@ -5,17 +5,24 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 public class Utils {
+	static String username, email, semester, course, section;
 	
 	public static String getUsernameFromPref() {
-		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode("csc216.plugin.prefs.page");
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode("csc.plugin.prefs.page");
 		//deal with ill formatted usernames
-		String username = preferences.get("USERNAME", "default").toLowerCase();
-		String email = preferences.get("EMAIL", "default").toLowerCase();
+		username = preferences.get("USERNAME", "default").toLowerCase();
+		email = preferences.get("EMAIL", "default").toLowerCase();
+		semester = preferences.get("SEMESTER", "default");
+		course = preferences.get("COURSE", "default");
+		section = preferences.get("SECTION", "default");
+		System.out.print(semester+" "+course+" "+section);
 		if(email.contains("@ncsu.edu")) {
 			if(email.replace("@ncsu.edu", "").equals(username)) {
 				// They match, we can just move on
@@ -73,5 +80,16 @@ public class Utils {
 	        }
 	        return null;
 	    }
+	 
+	 
+	 public static Map<String, String> getInfo() {
+		 Map<String, String> info = new HashMap<>();
+		 info.put("username", username);
+		 info.put("email", email);
+		 info.put("semester", semester);
+		 info.put("course", course);
+		 info.put("section", section);
+		 return info;
+	 }
 
 }

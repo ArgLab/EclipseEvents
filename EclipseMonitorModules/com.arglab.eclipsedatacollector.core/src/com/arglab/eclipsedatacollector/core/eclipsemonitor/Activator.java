@@ -60,13 +60,25 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+//import org.eclipse.equinox.p2.metadata.query.IUPropertyQuery;
+//import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.QueryUtil;
+import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
+import org.eclipse.equinox.p2.operations.ProvisioningSession;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -120,6 +132,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 
@@ -163,6 +176,9 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 	KeyBoardClickListener keyBoardClickListener;
 	// The shared instance
 	private static Activator plugin;
+	private BundleContext bundleContext;
+	
+	private static Map<String, String> userPreferences;
 	
 	//watchservice for checking resource change outside eclipse
 	private WatchService watchService;
@@ -180,8 +196,12 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		retriveKey();
+		
+        retriveKey();
 		plugin = this;
+		
+		bundleContext = context;
+		
 		
 //		LoggerResourceChangeListener listener = new LoggerResourceChangeListener(keyBoardClickListener);
 		LoggerResourceChangeListener listener = new LoggerResourceChangeListener();
@@ -191,6 +211,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
         pwl.trackPopupWindows();
      // Initialize and start the file system watcher
         startFileSystemWatcher();
+        
 	}
 
 
@@ -264,6 +285,10 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		return plugin;
 	}
 	
+	public BundleContext getBundleContext() {
+		return bundleContext;
+	}
+	
 	/**
 	This method is for saving the keys, client information within workspace. 
 	Right now we only focused on saving the information in internal memory.**/
@@ -293,26 +318,6 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		}
 		return storekey;
 	}
-//	public static String retriveKey() {
-//		preferences = ConfigurationScope.INSTANCE.getNode(PLUGIN_ID);
-//		//preferences.remove(KEY_NAME);
-//		String storekey = preferences.get(KEY_NAME, null);
-//		System.out.println("Key:"+preferences.get(KEY_NAME, null));
-//		if(storekey==null) {
-//			try {
-//				obClientConn = new ClientServerConnectionHandlers();
-//				String[] listStr = obClientConn.connectToServer();
-//				preferences.put(KEY_NAME, listStr[0]);
-//				preferences.put(CLIENT_KEY, listStr[1]);
-//				preferences.put(CLIENT_SECRET, listStr[2]);
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//		}
-//		return storekey;
-//	}
 	
 
 	private static String getKeyFromFile(String key) {
@@ -427,10 +432,38 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 	@Override
 	public void earlyStartup() {
 		// TODO Auto-generated method stub
+		
+		try {
+            Bundle bundle = Platform.getBundle("com.arglab.eclipsedatacollector.core"); // Replace with your plugin ID
+            if (bundle != null && bundle.getState() != Bundle.ACTIVE) {
+                bundle.start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		
+		
+		Job initJob = new Job("Initialize Feature Management") {
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+                FeatureManager manager = new FeatureManager();
+                manager.installFeatureIfNeeded();
+                return Status.OK_STATUS;
+            }
+        };
+        
+        initJob.schedule(5000);
+        
+        System.out.println("Early startup: Feature management scheduled");
+		
 		System.out.println("Plugin Started automatically");
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		System.out.println("DESCRIPTION: " + workspace.getRoot().getLocation().toOSString());
+		
+		
+
+		
 		workbench.addWindowListener(new IWindowListener() {
 
 			@Override
@@ -568,7 +601,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 				}
 			}
 		});
-
+	
 		
 		//create a Time instance
 		Timer timer = new Timer();
@@ -745,6 +778,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 			//System.out.println("Console Output Data: "+consoleOutput);
 			//System.out.println("MenubarClick Data: "+MenuBarClickActions);
 //			System.out.println("WorkSpaceErrorLog Data: "+errorLogList);
+			System.out.println("Activator");
 			keyBoardClickListener.immediateSave();
 			Map<String, String> parameters = new HashMap<>();
 			String [] commandStr = commandId.split("\\.");

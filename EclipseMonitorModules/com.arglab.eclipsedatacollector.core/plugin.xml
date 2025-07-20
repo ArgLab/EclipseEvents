@@ -29,7 +29,7 @@
       <page
             class="com.arglab.eclipsedatacollector.core.eclipsemonitor.UserLogin"
             id="tpp.userlogin"
-            name="CSC 216 Preferences">
+            name="CSC Preferences">
       </page>
    </extension>
 </plugin>

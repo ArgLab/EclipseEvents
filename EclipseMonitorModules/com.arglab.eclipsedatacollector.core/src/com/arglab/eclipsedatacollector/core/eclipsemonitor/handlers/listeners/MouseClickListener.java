@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -18,6 +19,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import com.arglab.eclipsedatacollector.core.eclipsemonitor.model.MouseClickData;
 import com.arglab.eclipsedatacollector.core.eclipsemonitor.model.jsonmodel.SequentialEventData;
+import com.arglab.eclipsedatacollector.core.eclipsemonitor.utils.Utils;
 
 
 
@@ -81,6 +83,7 @@ public class MouseClickListener implements MouseListener, Listener{
 	@Override
 	public void handleEvent(Event event) {
 		// TODO Auto-generated method stub
+		System.out.println("Mouse");
 		keyBoardClickListener.immediateSave();
 		if(window.getActivePage()!=null) {
 			if(window.getActivePage().getActivePart()!=null) {
