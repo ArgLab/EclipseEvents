@@ -1,130 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Available Files</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        h2 {
-            margin-bottom: 20px;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            margin: 8px 0;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .error-message {
-            color: red;
-        }
-    </style>
-</head>
-<body>
-    <h2>Available Files</h2>
-    <ul id="filesList">
-        <!-- List of files will appear here -->
-    </ul>
-    <p class="error-message" id="errorMessage"></p>
+	<head>
+		  <meta charset="UTF-8" />
+		    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		      <title>Available Files</title>
+		        <style>
+    body {
+	          font-family: Arial, sans-serif;
+		        background-color: #eef1f5;
+			      margin: 0;
+			            padding: 0;
+				          display: flex;
+					        justify-content: center;
+						    }
 
-    <script>
-        // Get the token from localStorage
-        const token = localStorage.getItem('token');
-        const errorMessage = document.getElementById('errorMessage');
-        const filesList = document.getElementById('filesList');
+        .container {
+		      width: 100%;
+		            max-width: 800px;
+			          padding: 40px 20px;
+				      }
 
-        // Fetch the list of files from the /files endpoint
-        async function fetchFiles() {
-            try {
-                // Clear any previous errors
-                errorMessage.textContent = '';
+	    h2 {
+		          text-align: center;
+			        margin-bottom: 30px;
+				      color: #333;
+				          }
 
-                // Make the API request to get the files
-                const response = await fetch('/files', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+	        .file-list {
+			      display: grid;
+			            grid-template-columns: 1fr;
+				          gap: 15px;
+					      }
 
-                // If the request fails (401, 403, etc.), show an error
-                if (!response.ok) {
-                    throw new Error('Failed to fetch files. Please check your authentication.');
-                }
+		    .file-item {
+			          display: flex;
+				        justify-content: space-between;
+					      align-items: center;
+					            background-color: #ffffff;
+						          padding: 15px 20px;
+							        border-radius: 8px;
+								      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+								          }
 
-                const files = await response.json();
+		        .file-name {
+				      font-weight: 500;
+				            color: #333;
+					          word-break: break-word;
+						      }
 
-                // Display the files in the list
-                filesList.innerHTML = '';
-                files.forEach(file => {
-                    const listItem = document.createElement('li');
-                    const downloadButton = document.createElement('button');
-                    downloadButton.textContent = `Download ${file}`;
+			    button {
+				          background-color: #007bff;
+					        color: white;
+						      border: none;
+						            padding: 8px 16px;
+							          border-radius: 5px;
+								        cursor: pointer;
+									    }
 
-                    // Set up the click event for the download button
-                    downloadButton.addEventListener('click', () => {
-                        downloadFile(file);
-                    });
+			        button:hover {
+					      background-color: #0056b3;
+					          }
 
-                    listItem.appendChild(downloadButton);
-                    filesList.appendChild(listItem);
-                });
+				    button:disabled {
+					          background-color: #999;
+						        cursor: not-allowed;
+							    }
 
-            } catch (error) {
-                errorMessage.textContent = error.message;
-            }
-        }
+				        .error-message {
+						      color: red;
+						            text-align: center;
+							          margin-top: 20px;
+								      }
 
-        function downloadFile(filename) {
-            fetch(`/download/${filename}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to download file. Please check your authentication.');
-                }
-                return response.blob();  // Convert response to a Blob
-            })
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);  // Create an object URL for the Blob
-                const a = document.createElement('a');  // Create a temporary anchor element
-                a.href = url;
-                a.download = filename;  // Set the download attribute with the filename
-                document.body.appendChild(a);
-                a.click();  // Trigger the download
-                a.remove();  // Clean up
-                window.URL.revokeObjectURL(url);  // Revoke the object URL
-            })
-            .catch(error => {
-                errorMessage.textContent = error.message;
-            });
-        }
+					    @media (min-width: 600px) {
+						          .file-list {
+								          grid-template-columns: 1fr 1fr;
+									        }
+							      }
+					      </style>
+	</head>
+	<body>
+		  <div class="container">
+			      <h2>Available Files</h2>
+			          <div class="file-list" id="filesList">
+					        <!-- File items injected here -->
+						    </div>
+						        <p class="error-message" id="errorMessage"></p>
+							  </div>
 
-        // Call the fetchFiles function on page load
-        window.onload = fetchFiles;
-    </script>
-</body>
+							    <script>
+								        const token = localStorage.getItem('token');
+								        const errorMessage = document.getElementById('errorMessage');
+								        const filesList = document.getElementById('filesList');
+
+								        async function fetchFiles() {
+																		          try {
+																												              errorMessage.textContent = '';
+
+																												              if (!token) {
+																																							            errorMessage.textContent = 'No authentication token found. Please log in.';
+																																							            return;
+																																							          }
+
+																												              const response = await fetch('/files', {
+																																							            method: 'GET',
+																																							            headers: {
+																																																		            'Authorization': `Bearer ${token}`
+																																																		          }
+																																							          });
+
+																												              if (!response.ok) {
+																																							            throw new Error('Failed to fetch files. Please check your authentication.');
+																																							          }
+
+																												              const files = await response.json();
+
+																												              filesList.innerHTML = '';
+																												              files.forEach(file => {
+																																							            const item = document.createElement('div');
+																																							            item.className = 'file-item';
+
+																																							            const name = document.createElement('div');
+																																							            name.className = 'file-name';
+																																							            name.textContent = file;
+
+																																							            const downloadButton = document.createElement('button');
+																																							            downloadButton.textContent = 'Download';
+																																							            downloadButton.addEventListener('click', (event) => {
+																																																		            downloadFile(file, event);
+																																																		          });
+
+																																							            item.appendChild(name);
+																																							            item.appendChild(downloadButton);
+																																							            filesList.appendChild(item);
+																																							          });
+
+																												            } catch (error) {
+																																							        errorMessage.textContent = error.message;
+																																							      }
+																		        }
+
+								        function downloadFile(filename, event) {
+																		          if (!token) {
+																												              errorMessage.textContent = 'No authentication token found. Please log in.';
+																												              return;
+																												            }
+
+																		          const button = event.target;
+																		          button.disabled = true;
+																		          const originalText = button.textContent;
+																		          button.textContent = `Downloading...`;
+
+																		          fetch(`/download/${filename}`, {
+																												              method: 'GET',
+																												              headers: {
+																																							            'Authorization': `Bearer ${token}`
+																																							          }
+																												            })
+																		            .then(response => {
+																													          if (!response.ok) {
+																																							                  throw new Error('Failed to download file.');
+																																							                }
+																													          return response.blob();
+																													        })
+																		            .then(blob => {
+																													          const url = window.URL.createObjectURL(blob);
+																													          const a = document.createElement('a');
+																													          a.href = url;
+																													          a.download = filename;
+																													          document.body.appendChild(a);
+																													          a.click();
+																													          a.remove();
+																													          window.URL.revokeObjectURL(url);
+																													        })
+																		            .catch(error => {
+																													          errorMessage.textContent = error.message;
+																													        })
+																		            .finally(() => {
+																													          button.disabled = false;
+																													          button.textContent = originalText;
+																													        });
+																		        }
+
+								        window.onload = fetchFiles;
+								      </script>
+	</body>
 </html>
+
