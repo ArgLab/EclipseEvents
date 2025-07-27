@@ -1,25 +1,37 @@
 #from redis_om import Migrator,get_redis_connection,HashModel,Field
 import redis
-from typing import List
+from typing import List 
 import datetime
 from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
 from util import  *
+
 r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 class Client():
     def __init__(self,client_id,client_secret,aes_key):
         self.client_id=client_id
         self.client_secret=client_secret
         self.aes_key=aes_key
+        self.reg_time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     def save(self):
         print(self.client_secret)
         print(self.client_id)
         print(self.aes_key)
-        dic={'client_secret':self.client_secret,'aes_key':self.aes_key}
+        dic={'client_secret':self.client_secret,'aes_key':self.aes_key,'reg_time':self.reg_time}
         r.hmset(self.client_id,dic)
         #r.hmset(self.client_id,dic)
         #r.hset(self.client_id,'client_secret',self.client_secret)
         #r.hset(self.client,'aes_key',self.aes_key)
+    def check_aes_unpad(self,input,iv):
+        cipher = AES.new(self.aes_key.encode(),AES.MODE_CBC,iv)
+        data = cipher.decrypt(input)
+        data = unpad(data,AES.block_size)
+        print("decrypted:", data)
+        if data.decode() == self.client_secret:
+            return True
+        else:
+            return False
 
     def check_aes(self,input,iv):
         print(self.aes_key,type(self.aes_key))

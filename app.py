@@ -105,7 +105,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
 
 
-default_user = UserInDB( username="admin", hashed_password=get_password_hash("Coding@Scale") ) 
+default_user = UserInDB( username="admin", hashed_password=get_password_hash(os.getenv("ADMIN_PASS")) ) 
 fake_users_db[default_user.username] = default_user.dict()
 
 '''
@@ -141,7 +141,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
 # List files (requires authentication)
 @app.get("/files", dependencies=[Depends(get_current_user)])
 def list_files() -> List[str]:
-    FILES_DIR = "/usr/local/share/data/sending"
+    FILES_DIR = os.getenv("FILE_PATH_DISPLAY")
     try:
         files = os.listdir(FILES_DIR)
         files.sort()
@@ -152,7 +152,7 @@ def list_files() -> List[str]:
 # Download file (requires authentication)
 @app.get("/download/{filename}")
 def download_file(filename: str,token: str = Depends(oauth2_scheme)):
-    FILES_DIR = "/usr/local/share/data/sending"
+    FILES_DIR = os.getenv("FILE_PATH_DISPLAY")
     file_path = os.path.join(FILES_DIR, filename)
     user = get_current_user(token)
     if os.path.isfile(file_path):
@@ -288,9 +288,11 @@ async def upload_file(
             raise HTTPException(status_code=500, detail="File decryption failed: " + str(e))
 
         # Save the decrypted file
-        target_dir = "/usr/local/share/data/testing"
+        
+        target_dir = os.getenv("FILE_PATH")
         os.makedirs(target_dir, exist_ok=True)
-        target_path = os.path.join(target_dir, filename)
+        file_rename= client_id + "_" +str(datetime.now().timestamp())+'.json' 
+        target_path = os.path.join(target_dir, file_rename)
         with open(target_path, "ab") as f:
             f.write(decrypted_file)
 

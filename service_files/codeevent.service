@@ -6,9 +6,12 @@ StartLimitIntervalSec=0
 #StartLimitBurst=5
 [Service]
 Type=simple
-Restart=on-failure
+Restart=always
 RestartSec=10s
-ExecStart=/usr/bin/python3 -u /usr/local/share/PythonServer/register.py
+RuntimeMaxSec=1d
+EnvironmentFile=/usr/local/share/EclipseEvents/.env
+WorkingDirectory=/usr/local/share/EclipseEvents
+ExecStart=/usr/bin/python3 -u /usr/local/share/EclipseEvents/app.py
 StandardInput=tty-force
 StandardOutput=journal
  

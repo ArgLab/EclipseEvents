@@ -60,7 +60,7 @@
                 errorMessage.textContent = '';
 
                 // Make the API request to get the files
-                const response = await fetch('https://lurch.csc.ncsu.edu/files', {
+                const response = await fetch('/files', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -96,7 +96,7 @@
         }
 
         function downloadFile(filename) {
-            fetch(`https://lurch.csc.ncsu.edu/download/${filename}`, {
+            fetch(`/download/${filename}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
