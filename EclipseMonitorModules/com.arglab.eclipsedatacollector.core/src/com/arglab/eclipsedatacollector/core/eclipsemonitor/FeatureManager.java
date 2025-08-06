@@ -32,10 +32,29 @@ public class FeatureManager {
 	
 	private static final String UPDATE_SITE_URL = "https://varad0210.github.io/TestPlugin/";
 	private static final String FEATURE_ID = "jenkins.feature.group";
+	private String course;
 	
+	public void installFeatureIfNeeded(String newCourse) {
+		course = newCourse;
+		continueInstall();
+	}
 	public void installFeatureIfNeeded() {
-        Map<String, String> userPreferences = Utils.getInfo();
-        if (userPreferences.get("course")=="216" && !isFeatureInstalled()) {
+		Map<String, String> userPreferences = Utils.getInfo();
+		course = userPreferences.get("course");
+		continueInstall();
+	}
+	
+	
+	public void continueInstall() {	
+//        Map<String, String> userPreferences = Utils.getInfo();
+		System.out.println("------------------------------------------");
+		System.out.println("------------------------------------------");
+		System.out.println("------------------------------------------");
+		System.out.println(course);
+		System.out.println("------------------------------------------");
+		System.out.println("------------------------------------------");
+		System.out.println("------------------------------------------");
+        if (course=="216" && !isFeatureInstalled()) {
             boolean I = installFeature();
             if(I) {
             	System.out.println("Installed");
@@ -44,7 +63,7 @@ public class FeatureManager {
             else {
             	System.out.println("Not installed");
             }
-        } else if (userPreferences.get("course")!="216" && isFeatureInstalled()) {
+        } else if (course!="216" && isFeatureInstalled()) {
             boolean U = uninstallFeature();
             if(U) {
 	        	System.out.println("Uninstalled");
@@ -55,7 +74,7 @@ public class FeatureManager {
             }
         }
         else {
-        	System.out.println("Something else" + userPreferences.get("course") + isFeatureInstalled());
+        	System.out.println("Something else" + course + isFeatureInstalled());
         }
     }
 

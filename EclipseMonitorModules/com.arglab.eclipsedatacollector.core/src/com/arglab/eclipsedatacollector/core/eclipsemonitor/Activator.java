@@ -434,7 +434,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		// TODO Auto-generated method stub
 		
 		try {
-            Bundle bundle = Platform.getBundle("com.arglab.eclipsedatacollector.core"); // Replace with your plugin ID
+            Bundle bundle = Platform.getBundle("com.arglab.eclipsedatacollector.core");
             if (bundle != null && bundle.getState() != Bundle.ACTIVE) {
                 bundle.start();
             }
@@ -452,7 +452,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
             }
         };
         
-        initJob.schedule(5000);
+        initJob.schedule(2000);
         
         System.out.println("Early startup: Feature management scheduled");
 		
