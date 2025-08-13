@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Jenkins
-Bundle-SymbolicName: com.arglab.eclipsedatacollector.jenkins1;singleton:=true
+Bundle-SymbolicName: com.arglab.eclipsedatacollector.jenkins;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.ui;bundle-version="3.206.100",
  org.eclipse.ui.workbench,

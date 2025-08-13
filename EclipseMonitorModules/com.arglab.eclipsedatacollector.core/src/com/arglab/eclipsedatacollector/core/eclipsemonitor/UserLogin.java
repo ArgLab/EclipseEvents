@@ -53,21 +53,24 @@ public class UserLogin extends FieldEditorPreferencePage implements IWorkbenchPr
         setDescription("CSC Student Info");
     }
     
+    
     @Override
     public boolean performOk() {
         String oldCourse = getPreferenceStore().getString("COURSE");
         boolean result = super.performOk();
         String newCourse = getPreferenceStore().getString("COURSE");
         if (!oldCourse.equals(newCourse)) {
-            boolean restart = MessageDialog.openQuestion(
-                getShell(),
-                "Restart Required",
-                "You've changed the course. A restart is required to apply changes.\nRestart now?"
-            );
-
-            if (restart) {
-                Display.getDefault().asyncExec(() -> PlatformUI.getWorkbench().restart());
-            }
+//            boolean restart = MessageDialog.openQuestion(
+//                getShell(),
+//                "Restart Required",
+//                "You've changed the course. A restart is required to apply changes.\nRestart now?"
+//            );
+//
+//            if (restart) {
+//                Display.getDefault().asyncExec(() -> PlatformUI.getWorkbench().restart());
+//            }
+        	FeatureManager FM = new FeatureManager();
+        	FM.installFeatureIfNeeded(newCourse);
         }
         return result;
     }
