@@ -177,12 +177,14 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 	// The shared instance
 	private static Activator plugin;
 	private BundleContext bundleContext;
-	
+	private volatile boolean running = false;
 	private static Map<String, String> userPreferences;
 	
 	//watchservice for checking resource change outside eclipse
 	private WatchService watchService;
     private Thread watchThread;
+    
+    private PopupWindowListener popupListener;
 
 	/**
 	 * The constructor
@@ -207,8 +209,9 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		LoggerResourceChangeListener listener = new LoggerResourceChangeListener();
         ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
   
-        PopupWindowListener pwl = new PopupWindowListener();
-        pwl.trackPopupWindows();
+        Display display = PlatformUI.getWorkbench().getDisplay();
+        popupListener = new PopupWindowListener(display);
+        popupListener.startTrackingPopups();
      // Initialize and start the file system watcher
         startFileSystemWatcher();
         
@@ -222,10 +225,15 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		 // Stop the file system watcher
         stopFileSystemWatcher();
         
+        if(popupListener !=null) {
+        	popupListener.stopTrackingPopups();
+        	popupListener = null;
+        }
 		plugin = null;
 		super.stop(context);
 	}
 
+	
 	private void startFileSystemWatcher() {
         try {
             watchService = FileSystems.getDefault().newWatchService();
@@ -234,28 +242,49 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
             System.out.println(path.toString());
             // Register the path to watch for changes
             path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
-
+            running = true;
             watchThread = new Thread(() -> {
                 try {
-                    while (true) {
-                        WatchKey key = watchService.take();
-                        for (WatchEvent<?> event : key.pollEvents()) {
-                            if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
-                                WatchEvent<java.nio.file.Path> ev = (WatchEvent<java.nio.file.Path>) event;
-                                System.out.println(ev.toString());
-                                java.nio.file.Path newPath = ev.context();
-                                System.out.println("New file system resource added: " + newPath.toString());
-                                SequentialEventData sev = new SequentialEventData("External File Change", newPath.toString());
-                                listSequntialevents.add(sev);
-                                // Log the event or take appropriate action
-                            }
+                    while (running) {
+                        // Use poll with timeout so we can exit when running=false
+                        WatchKey key = watchService.poll(500, java.util.concurrent.TimeUnit.MILLISECONDS);
+                        if (key == null) {
+                            continue; // timeout; loop around and check running
                         }
-                        key.reset();
+
+                        for (WatchEvent<?> event : key.pollEvents()) {
+                            WatchEvent.Kind<?> kind = event.kind();
+                            if (kind == StandardWatchEventKinds.OVERFLOW) {
+                                continue; // lost events; skip
+                            }
+
+                            @SuppressWarnings("unchecked")
+                            WatchEvent<java.nio.file.Path> ev = (WatchEvent<java.nio.file.Path>) event;
+                            java.nio.file.Path relative = ev.context();      // relative to 'root'
+                            java.nio.file.Path absolute = path.resolve(relative);
+
+                            System.out.println("FS event: " + kind.name() + " -> " + absolute);
+
+                            SequentialEventData sev =
+                                    new SequentialEventData("External File Change", absolute.toString());
+                            listSequntialevents.add(sev);
+                        }
+
+                        // If reset fails, the directory is no longer accessible; stop the loop.
+                        if (!key.reset()) {
+                            break;
+                        }
                     }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                } catch (java.nio.file.ClosedWatchServiceException cwse) {
+                    // Watcher was closed while blocking/polling: exit quietly.
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt(); // allow graceful exit
+                } catch (Throwable t) {
+                    t.printStackTrace();
                 }
-            });
+            }, "WorkspaceWatchThread");
+
+            watchThread.setDaemon(true); // don’t prevent JVM shutdown
             watchThread.start();
 
         } catch (Exception e) {
@@ -297,6 +326,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		preferences = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
 //		preferences.remove(KEY_NAME);
 		String storekey = getKeyFromFile(KEY_NAME);
+		
 		if(storekey==null) {
 			try {
 				obClientConn = new ClientServerConnectionHandlers();
@@ -614,8 +644,8 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 			}
 		};
 
-//		timer.schedule(task, 0,600000);
-		timer.schedule(task, 0,10000);
+		timer.schedule(task, 0,600000);
+//		timer.schedule(task, 0,10000);
 	}
 
 	public void saveEventDataAndSendtoServer(IWorkbench workbench) {
