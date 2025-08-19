@@ -55,6 +55,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -89,6 +90,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -100,10 +102,13 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IStartup;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
@@ -145,6 +150,7 @@ import com.arglab.eclipsedatacollector.core.eclipsemonitor.handlers.listeners.Lo
 import com.arglab.eclipsedatacollector.core.eclipsemonitor.handlers.listeners.MouseClickListener;
 import com.arglab.eclipsedatacollector.core.eclipsemonitor.handlers.listeners.PopupWindowListener;
 import com.arglab.eclipsedatacollector.core.eclipsemonitor.handlers.listeners.WindowClickListener;
+import com.arglab.eclipsedatacollector.core.eclipsemonitor.model.MouseClickData;
 import com.arglab.eclipsedatacollector.core.eclipsemonitor.model.ProjectExplorerModel;
 import com.arglab.eclipsedatacollector.core.eclipsemonitor.model.UserActionData;
 import com.arglab.eclipsedatacollector.core.eclipsemonitor.model.WorkSpaceLog;
@@ -399,66 +405,112 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 			System.out.println("Exception Happened due to: " + io.getMessage());
 		}
 	}
-	
-	public void getWorkSpceErrorLog() throws PartInitException{
-		//Error Log Collections
-		errorLogList = new ArrayList<>();
-		IViewPart viewPart;
-		try {
-			PlatformUI.getWorkbench().getWorkbenchWindows()[0].getPages()[0].showView("org.eclipse.pde.runtime.LogView");
-			viewPart = PlatformUI.getWorkbench().getWorkbenchWindows()[0].getPages()[0].findView("org.eclipse.pde.runtime.LogView");
-		} catch (Exception e) {
-			return;
-		}
-//		if(lastIneretedErrorLogDateTime ==null) {
-//			Calendar calendar = Calendar.getInstance();
-//	        Date currDate = calendar.getTime();
-//	        lastIneretedErrorLogDateTime = currDate;
-//		}
-		
-//		System.out.println(viewPart.getTitle());
-		LogView logview = (LogView) viewPart;
-//	        System.out.println(logview.getContentDescription());
-//	        System.out.println(logview.getTitle());
-//	        System.out.println(logview.getPartName());
+	public void getWorkSpceErrorLog() {
+	    errorLogList = new ArrayList<>();
 
-		AbstractEntry[] logs = logview.getElements();
-		
-		for (AbstractEntry entry : logs) {
-			String severity = entry.toString();
-			String message = entry.getAdapter(LogEntry.class).getMessage();
-			String pluginId = entry.getAdapter(LogEntry.class).getPluginId();
-			Date dateErrorLog = null;
-			try {
-				dateErrorLog = dateFormat.parse(entry.getAdapter(LogEntry.class).getFormattedDate());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			String sessionData = entry.getAdapter(LogEntry.class).getSession().getSessionData();
-			if(lastIneretedErrorLogDateTime == null) {
-				WorkSpaceLog wsl = new WorkSpaceLog(dateErrorLog, severity, pluginId, message, sessionData);
-				errorLogList.add(wsl);
-			}
-			else if(lastIneretedErrorLogDateTime.before(dateErrorLog)) { //Note: note considering  any log from previous sessions.// || lastIneretedErrorLogDateTime.equals(dateErrorLog)) {
-				WorkSpaceLog wsl = new WorkSpaceLog(dateErrorLog, severity, pluginId, message, sessionData);
-				errorLogList.add(wsl);
-			}
-			
-		}
-		Collections.sort(errorLogList);
-		try {
-			if(errorLogList.size()>0) {
-				lastIneretedErrorLogDateTime = dateFormat.parse(errorLogList.get(errorLogList.size() -1).getDate());
-				System.out.println("The last date for the error log is:"+lastIneretedErrorLogDateTime.toString());
-			}
-			
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//return errorLogList;
+	    try {
+	        IWorkbenchWindow win = PlatformUI.getWorkbench().getWorkbenchWindows()[0];
+	        IWorkbenchPage page = win.getPages()[0];
+
+	        // Create the Error Log view *hidden*, do not bring it to front
+	        page.showView("org.eclipse.pde.runtime.LogView", null, IWorkbenchPage.VIEW_CREATE);
+	        IViewPart viewPart = page.findView("org.eclipse.pde.runtime.LogView");
+	        if (!(viewPart instanceof LogView)) return;
+
+	        LogView logview = (LogView) viewPart;
+	        AbstractEntry[] logs = logview.getElements();
+
+	        for (AbstractEntry entry : logs) {
+	            LogEntry le = entry.getAdapter(LogEntry.class);
+	            if (le == null) continue;
+
+	            Date when = null;
+	            try { when = dateFormat.parse(le.getFormattedDate()); } catch (ParseException ignore) {}
+
+	            if (lastIneretedErrorLogDateTime == null || 
+	               (when != null && lastIneretedErrorLogDateTime.before(when))) {
+
+	                String severity = entry.toString();
+	                String message  = le.getMessage();
+	                String pluginId = le.getPluginId();
+	                String session  = le.getSession() != null ? le.getSession().getSessionData() : null;
+
+	                errorLogList.add(new WorkSpaceLog(when, severity, pluginId, message, session));
+	            }
+	        }
+
+	        Collections.sort(errorLogList);
+	        if (!errorLogList.isEmpty()) {
+	            lastIneretedErrorLogDateTime =
+	                dateFormat.parse(errorLogList.get(errorLogList.size() - 1).getDate());
+	            System.out.println("The last date for the error log is: " + lastIneretedErrorLogDateTime);
+	        }
+	    } catch (Exception e) {
+	        // swallow quietly; never pop UI on failures
+	    	System.out.println("Exception happened due to:"+e.getMessage());
+	    }
 	}
+	
+//	public void getWorkSpceErrorLog() throws PartInitException{
+//		//Error Log Collections
+//		errorLogList = new ArrayList<>();
+//		IViewPart viewPart;
+//		try {
+//			PlatformUI.getWorkbench().getWorkbenchWindows()[0].getPages()[0].showView("org.eclipse.pde.runtime.LogView");
+//			viewPart = PlatformUI.getWorkbench().getWorkbenchWindows()[0].getPages()[0].findView("org.eclipse.pde.runtime.LogView");
+//		} catch (Exception e) {
+//			return;
+//		}
+////		if(lastIneretedErrorLogDateTime ==null) {
+////			Calendar calendar = Calendar.getInstance();
+////	        Date currDate = calendar.getTime();
+////	        lastIneretedErrorLogDateTime = currDate;
+////		}
+//		
+////		System.out.println(viewPart.getTitle());
+//		LogView logview = (LogView) viewPart;
+////	        System.out.println(logview.getContentDescription());
+////	        System.out.println(logview.getTitle());
+////	        System.out.println(logview.getPartName());
+//
+//		AbstractEntry[] logs = logview.getElements();
+//		
+//		for (AbstractEntry entry : logs) {
+//			String severity = entry.toString();
+//			String message = entry.getAdapter(LogEntry.class).getMessage();
+//			String pluginId = entry.getAdapter(LogEntry.class).getPluginId();
+//			Date dateErrorLog = null;
+//			try {
+//				dateErrorLog = dateFormat.parse(entry.getAdapter(LogEntry.class).getFormattedDate());
+//			} catch (ParseException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			String sessionData = entry.getAdapter(LogEntry.class).getSession().getSessionData();
+//			if(lastIneretedErrorLogDateTime == null) {
+//				WorkSpaceLog wsl = new WorkSpaceLog(dateErrorLog, severity, pluginId, message, sessionData);
+//				errorLogList.add(wsl);
+//			}
+//			else if(lastIneretedErrorLogDateTime.before(dateErrorLog)) { //Note: note considering  any log from previous sessions.// || lastIneretedErrorLogDateTime.equals(dateErrorLog)) {
+//				WorkSpaceLog wsl = new WorkSpaceLog(dateErrorLog, severity, pluginId, message, sessionData);
+//				errorLogList.add(wsl);
+//			}
+//			
+//		}
+//		Collections.sort(errorLogList);
+//		try {
+//			if(errorLogList.size()>0) {
+//				lastIneretedErrorLogDateTime = dateFormat.parse(errorLogList.get(errorLogList.size() -1).getDate());
+//				System.out.println("The last date for the error log is:"+lastIneretedErrorLogDateTime.toString());
+//			}
+//			
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		//return errorLogList;
+//	}
+	
 	@Override
 	public void earlyStartup() {
 		// TODO Auto-generated method stub
@@ -653,7 +705,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 			public void run() {
 				try {
 					getWorkSpceErrorLog();
-				} catch (PartInitException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -946,7 +998,90 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 
 	private void handleSelectionChange(IWorkbenchPart part, ISelection selection) {
 		// TODO Auto-generated method stub
-		System.out.println("Selection Happened in: "+part.getTitle());
+//		System.out.println("Selection Happened in: "+part.getTitle());
+		System.out.println("Selection Happened in: " + (part != null ? part.getTitle() : "<unknown>"));
+		
+		if (selection == null) {
+	        System.out.println("Selection is null.");
+	        return;
+	    }
+
+	    // --- A) Text inside an editor (e.g., selecting "dfdsdfsdnfsdfsdjfkljl ...") ---
+	    if (selection instanceof ITextSelection) {
+	        ITextSelection ts = (ITextSelection) selection;
+
+	        // Ignore caret-only moves if you want only real selections
+	        if (ts.getLength() <= 0) {
+	            System.out.println("Text selection length = 0 (caret move).");
+	            return;
+	        }
+
+	        String fileName = "<unknown>";
+	        String projectName = "<unknown>";
+	        String selectedText = null;
+	        int line = ts.getStartLine() + 1;  // 1-based
+	        int column = 1;
+
+	        try {
+	            // Try to get the active editor’s document to extract the text & column
+	            ITextEditor textEditor = part.getAdapter(ITextEditor.class);
+	            if (textEditor == null && part instanceof IEditorPart) {
+	                // Some editors don’t adapt directly—try site’s selection provider later
+	                textEditor = (ITextEditor) ((IEditorPart) part).getAdapter(ITextEditor.class);
+	            }
+
+	            if (textEditor != null) {
+	                IDocumentProvider provider = textEditor.getDocumentProvider();
+	                IDocument doc = provider.getDocument(textEditor.getEditorInput());
+
+	                // Compute 1-based column from offset within the line
+	                try {
+	                    IRegion lineInfo = doc.getLineInformation(ts.getStartLine());
+	                    column = (ts.getOffset() - lineInfo.getOffset()) + 1;
+	                } catch (org.eclipse.jface.text.BadLocationException ignore) {}
+
+	                // Extract selected text safely
+	                int offset = ts.getOffset();
+	                int length = ts.getLength();
+	                if (offset >= 0 && length > 0 && offset + length <= doc.getLength()) {
+	                    selectedText = doc.get(offset, length);
+	                }
+
+	                // Derive file name / project name
+	                IEditorInput input = textEditor.getEditorInput();
+	                if (input instanceof IFileEditorInput) {
+	                    IFile file = ((IFileEditorInput) input).getFile();
+	                    if (file != null) {
+	                        fileName = file.getName();
+	                        IProject p = file.getProject();
+	                        if (p != null) projectName = p.getName();
+	                    }
+	                } else if (input instanceof IStorageEditorInput) {
+	                    IStorage storage = ((IStorageEditorInput) input).getStorage();
+	                    if (storage != null) fileName = storage.getName();
+	                }
+	            }
+	        } catch (Throwable t) {
+	            t.printStackTrace();
+	        }
+
+	        System.out.println("Editor text selection in file: " + fileName + " (project: " + projectName + ")");
+	        System.out.println("Line: " + line + ", Column: " + column);
+	        if (selectedText != null) {
+	            System.out.println("Selected text: \"" + selectedText + "\"");
+	        }
+
+	        // Record your event
+	        ProjectExplorerModel pem = new ProjectExplorerModel();
+	        pem.setMouseClick(fileName);
+	        pem.setPathClick(projectName);
+
+	        SequentialEventData sed = new SequentialEventData("EditorTextSelection",
+	                new MouseClickData(column, line, fileName, line, column)); // or define a dedicated model
+	        listSequntialevents.add(sed);
+	        return;
+	    }
+	    
 		 // Handle structured selections like those from the Project Explorer
 		if (selection instanceof IStructuredSelection) {
 		    IStructuredSelection structuredSelection = (IStructuredSelection) selection;
