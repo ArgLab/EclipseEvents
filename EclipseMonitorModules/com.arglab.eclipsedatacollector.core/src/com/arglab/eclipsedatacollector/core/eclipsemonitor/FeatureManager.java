@@ -30,8 +30,9 @@ import com.arglab.eclipsedatacollector.core.eclipsemonitor.utils.Utils;
 
 public class FeatureManager {
 	
-	private static final String UPDATE_SITE_URL = "https://varad0210.github.io/TestPlugin/";
-	private static final String FEATURE_ID = "jenkins.feature.group";
+	private static final String UPDATE_SITE_URL = "https://arglab.github.io/EclipseEvents/";
+	private static final String FEATURE_ID_216 = "jenkins.feature.group";
+	private static final String FEATURE_ID_316 = "analysis.feature.group";
 	private String course;
 	
 	public void installFeatureIfNeeded(String newCourse) {
@@ -47,34 +48,63 @@ public class FeatureManager {
 	
 	public void continueInstall() {	
 //        Map<String, String> userPreferences = Utils.getInfo();
-		System.out.println("------------------------------------------");
-		System.out.println("------------------------------------------");
-		System.out.println("------------------------------------------");
-		System.out.println(course);
-		System.out.println("------------------------------------------");
-		System.out.println("------------------------------------------");
-		System.out.println("------------------------------------------");
-        if (course=="216" && !isFeatureInstalled()) {
-            boolean I = installFeature();
+//		System.out.println("------------------------------------------");
+//		System.out.println("------------------------------------------");
+//		System.out.println("------------------------------------------");
+//		System.out.println(course);
+//		System.out.println("------------------------------------------");
+//		System.out.println("------------------------------------------");
+//		System.out.println("------------------------------------------");
+		boolean scheduleRestart = false;
+        if (course=="216" && !isFeatureInstalled(FEATURE_ID_216)) {
+            boolean I = installFeature(FEATURE_ID_216);
             if(I) {
             	System.out.println("Installed");
-            	scheduleRestart();
+            	scheduleRestart = true;
             }
             else {
             	System.out.println("Not installed");
             }
-        } else if (course!="216" && isFeatureInstalled()) {
-            boolean U = uninstallFeature();
+        } else if (course!="216" && isFeatureInstalled(FEATURE_ID_216)) {
+            boolean U = uninstallFeature(FEATURE_ID_216);
             if(U) {
 	        	System.out.println("Uninstalled");
-	        	scheduleRestart();
+	        	scheduleRestart = true;
             }
             else {
 	        	System.out.println("Not Uninstalled");
             }
         }
         else {
-        	System.out.println("Something else" + course + isFeatureInstalled());
+        	System.out.println("Something else" + course + isFeatureInstalled(FEATURE_ID_216));
+        }
+        if (course=="316" && !isFeatureInstalled(FEATURE_ID_316)) {
+            boolean I = installFeature(FEATURE_ID_316);
+            if(I) {
+            	System.out.println("Installed");
+            	scheduleRestart = true;
+            }
+            else {
+            	System.out.println("Not installed");
+            }
+        } else if (course!="316" && isFeatureInstalled(FEATURE_ID_316)) {
+            boolean U = uninstallFeature(FEATURE_ID_316);
+            if(U) {
+	        	System.out.println("Uninstalled");
+	        	scheduleRestart = true;
+            }
+            else {
+	        	System.out.println("Not Uninstalled");
+            }
+        }
+        else {
+        	System.out.println("Something else" + course + isFeatureInstalled(FEATURE_ID_316));
+        }
+        if (scheduleRestart == true) {
+        	scheduleRestart();
+        }
+        else {
+        	System.out.println("No need for restart");
         }
     }
 
@@ -101,13 +131,13 @@ public class FeatureManager {
 	    });
 	}
 	
-	private boolean isFeatureInstalled() {
+	private boolean isFeatureInstalled(String feature) {
 		try {
 	        IProvisioningAgent agent = getProvisioningAgent();
 
 	        IProfileRegistry profileRegistry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
 	        IProfile profile = profileRegistry.getProfile(IProfileRegistry.SELF);
-	        IQueryResult<IInstallableUnit> result = profile.query(QueryUtil.createIUQuery(FEATURE_ID), new NullProgressMonitor());
+	        IQueryResult<IInstallableUnit> result = profile.query(QueryUtil.createIUQuery(feature), new NullProgressMonitor());
 	        return !result.isEmpty();
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -115,15 +145,15 @@ public class FeatureManager {
 	    }
     }
 	
-	private boolean installFeature() {
+	private boolean installFeature(String feature) {
 		try {
             IProvisioningAgent agent = getProvisioningAgent();
             IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
             IMetadataRepository repository = metadataManager.loadRepository(URI.create(UPDATE_SITE_URL), null);
-            IQueryResult<IInstallableUnit> result = repository.query(QueryUtil.createIUQuery(FEATURE_ID), null);
+            IQueryResult<IInstallableUnit> result = repository.query(QueryUtil.createIUQuery(feature), null);
 
             if (result.isEmpty()) {
-                System.err.println("No IU found with id " + FEATURE_ID);
+                System.err.println("No IU found with id " + feature);
                 return false;
             }
             
@@ -146,7 +176,7 @@ public class FeatureManager {
         }
     }
 	
-	private boolean uninstallFeature() {
+	private boolean uninstallFeature(String feature) {
 	    try {
 	        IProvisioningAgent agent = getProvisioningAgent();
 
@@ -154,10 +184,10 @@ public class FeatureManager {
 	        IProfileRegistry profileRegistry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
 	        IProfile selfProfile = profileRegistry.getProfile(IProfileRegistry.SELF);
 
-	        IQueryResult<IInstallableUnit> result = selfProfile.query(QueryUtil.createIUQuery(FEATURE_ID), null);
+	        IQueryResult<IInstallableUnit> result = selfProfile.query(QueryUtil.createIUQuery(feature), null);
 
 	        if (result.isEmpty()) {
-	            System.err.println("Feature " + FEATURE_ID + " is not installed.");
+	            System.err.println("Feature " + feature + " is not installed.");
 	            return false;
 	        }
 
