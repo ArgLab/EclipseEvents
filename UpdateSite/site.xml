@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/core_1.0.0.qualifier.jar" id="core" version="1.0.0.qualifier">
+   <feature url="features/core_1.0.0.202508191839.jar" id="core" version="1.0.0.202508191839">
       <category name="Core"/>
    </feature>
-   <feature url="features/analysis_1.0.0.qualifier.jar" id="analysis" version="1.0.0.qualifier">
+   <feature url="features/analysis_1.0.0.202508191839.jar" id="analysis" version="1.0.0.202508191839">
       <category name="Optional"/>
    </feature>
-   <feature url="features/jenkins_1.0.0.202508191837.jar" id="jenkins" version="1.0.0.202508191837">
+   <feature url="features/jenkins_1.0.0.202508191839.jar" id="jenkins" version="1.0.0.202508191839">
       <category name="Optional"/>
    </feature>
    <category-def name="Core" label="Core"/>
