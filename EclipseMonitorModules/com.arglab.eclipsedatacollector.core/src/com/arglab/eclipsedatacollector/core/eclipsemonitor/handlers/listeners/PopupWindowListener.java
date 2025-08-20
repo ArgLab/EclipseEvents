@@ -52,14 +52,17 @@ public class PopupWindowListener {
 	                    boolean looksLikeDialog = (style & SWT.DIALOG_TRIM) != 0 || isModal || shell.getParent() != null;
 	                    if (!looksLikeDialog) return;
 
-	                    display.timerExec(50, new Runnable() {
+	                    // keep a handle to the scheduled runnable so we can cancel it
+	                    final Runnable[] taskRef = new Runnable[1];
+
+	                    taskRef[0] = new Runnable() {
 	                        @Override public void run() {
+	                            // bail if display/shell went away
 	                            if (display.isDisposed() || shell.isDisposed()) return;
 
 	                            String title = safeShellText(shell);
 	                            System.out.println("Popup window: " + title);
 
-	                            // If you need tabs inside this dialog, search within the shell only:
 	                            CTabFolder tabFolder = findTabFolderRecursively(shell);
 	                            String activeTab = null;
 	                            if (tabFolder != null && !tabFolder.isDisposed()
@@ -76,9 +79,18 @@ public class PopupWindowListener {
 	                                    activeTab != null ? "PopUp Mouse Click" : "PopUp Opened", pwm);
 	                            GlobalVars.listSequentialEvents.add(sed);
 	                        }
-	                    });
+	                    };
 
-	                    shell.addListener(SWT.Dispose, e -> display.timerExec(-1, (Runnable) null));
+	                    // schedule once after a small delay
+	                    display.timerExec(50, taskRef[0]);
+
+	                    // cancel the exact same runnable if the shell disposes before it runs
+	                    shell.addListener(SWT.Dispose, e -> {
+	                        if (!display.isDisposed() && taskRef[0] != null) {
+	                            display.timerExec(-1, taskRef[0]); // <-- cancel by instance
+	                            taskRef[0] = null;                 // help GC
+	                        }
+	                    });
 	                }
 	            };
 
