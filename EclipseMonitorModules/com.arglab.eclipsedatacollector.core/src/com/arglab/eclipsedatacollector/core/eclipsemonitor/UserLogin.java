@@ -41,7 +41,8 @@ public class UserLogin extends FieldEditorPreferencePage implements IWorkbenchPr
         String[][] sectionOptions = {
                 {"Section 001", "001"},
                 {"Section 002", "002"},
-                {"Section 003", "003"}
+                {"Section 003", "003"},
+                {"Section 601", "601"}
             };
         addField(new ComboFieldEditor("SECTION", "Section:", sectionOptions, getFieldEditorParent()));
     }

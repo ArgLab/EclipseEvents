@@ -13,8 +13,13 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -37,6 +42,11 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.ConsoleHandler;
 
 import org.eclipse.core.commands.Command;
@@ -55,6 +65,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -89,6 +100,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -100,10 +112,13 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IStartup;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
@@ -145,6 +160,7 @@ import com.arglab.eclipsedatacollector.core.eclipsemonitor.handlers.listeners.Lo
 import com.arglab.eclipsedatacollector.core.eclipsemonitor.handlers.listeners.MouseClickListener;
 import com.arglab.eclipsedatacollector.core.eclipsemonitor.handlers.listeners.PopupWindowListener;
 import com.arglab.eclipsedatacollector.core.eclipsemonitor.handlers.listeners.WindowClickListener;
+import com.arglab.eclipsedatacollector.core.eclipsemonitor.model.MouseClickData;
 import com.arglab.eclipsedatacollector.core.eclipsemonitor.model.ProjectExplorerModel;
 import com.arglab.eclipsedatacollector.core.eclipsemonitor.model.UserActionData;
 import com.arglab.eclipsedatacollector.core.eclipsemonitor.model.WorkSpaceLog;
@@ -170,7 +186,15 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 	private Date lastIneretedErrorLogDateTime = null;
 	private static IEclipsePreferences preferences;
 //	public StringBuilder keyBoardClickEvents;
-	List<WorkSpaceLog> errorLogList;
+	//log tailing state (no UI)
+	private final List<WorkSpaceLog> errorLogList = Collections.synchronizedList(new ArrayList<>());
+	private volatile long logFileCursor = -1L;
+	
+	//Scheduler for periodic work (send + log tail)
+	private ScheduledExecutorService scheduler;
+	private ScheduledFuture<?> sendTask;
+	private final AtomicBoolean sendInFlight = new AtomicBoolean(false);
+	
 	private List<SequentialEventData> listSequntialevents;
 	MouseClickListener mouseClickListener;
 	KeyBoardClickListener keyBoardClickListener;
@@ -186,12 +210,12 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
     
     private PopupWindowListener popupListener;
 
+    private static final String KEY_LISTENERS_ADDED = "EM_LISTENERS_ADDED";
+    
 	/**
 	 * The constructor
 	 */
 	public Activator() {
-//		keyBoardClickEvents = new StringBuilder();
-		errorLogList = new ArrayList<>();
 		listSequntialevents = new ArrayList<>();		
 	}
 
@@ -215,6 +239,80 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
      // Initialize and start the file system watcher
         startFileSystemWatcher();
         
+        //backfill log file once (no UI)
+        backfillErrorLogFromFileOnce();
+        
+        //register selection listeners ONCE for existing & future windows
+     // register selection listeners ONCE for existing & future windows (UI thread)
+        Display.getDefault().asyncExec(() -> {
+            IWorkbench workbench = PlatformUI.getWorkbench();
+            for (IWorkbenchWindow w : workbench.getWorkbenchWindows()) {
+                addSelectionListener(w); // once
+            }
+            workbench.addWindowListener(new IWindowListener() {
+
+    			@Override
+    			public void windowOpened(IWorkbenchWindow window) {
+    				// TODO Auto-generated method stub
+    				System.out.println("Current Active window: "+window.getActivePage().getLabel());
+    				addSelectionListener(window);
+
+    			}
+
+    			@Override
+    			public void windowDeactivated(IWorkbenchWindow window) {
+    				// TODO Auto-generated method stub
+    				System.out.println("window got deactivated at time." + new Date().toString());
+    				System.out.println("activated window: "+window.getWorkbench().getActiveWorkbenchWindow().getPages().getClass().getName());
+    				String window_Name = window.getWorkbench().getActiveWorkbenchWindow().getPages().getClass().getName(); 
+    				//System.out.println("Time to get activated the window. "+new Date().toString());
+    				SequentialEventData sed = new SequentialEventData("Window Deactivated", window_Name);
+    				listSequntialevents.add(sed);
+    				//could capture the event of idle So we can calculate that
+
+    			}
+
+    			@Override
+    			public void windowClosed(IWorkbenchWindow window) {
+    				// TODO Auto-generated method stub
+    				window.getWorkbench().removeWindowListener(this);
+    				saveEventDataAndSendtoServer(workbench);
+    				removeSelectionListener(window);
+    			}
+
+    			@Override
+    			public void windowActivated(IWorkbenchWindow window) {
+    				// TODO Auto-generated method stub
+    				System.out.println("activated window: "+window.getWorkbench().getActiveWorkbenchWindow().getPages().getClass().getName());
+    				String window_Name = window.getWorkbench().getActiveWorkbenchWindow().getPages().getClass().getName(); 
+    				//System.out.println("Time to get activated the window. "+new Date().toString());
+    				SequentialEventData sed = new SequentialEventData("Window Activated", window_Name);
+    				listSequntialevents.add(sed);
+
+    			}
+    		});
+        });
+        		
+		// === CHANGED === set up scheduler for 10-min periodic job
+	    scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+	        Thread t = new Thread(r, "EclipseMonitor-Scheduler");
+	        t.setDaemon(true);
+	        return t;
+	    });
+	    sendTask = scheduler.scheduleAtFixedRate(() -> {
+	        if (!sendInFlight.compareAndSet(false, true)) return; // skip overlap
+	        try {
+	            // Tail new log lines (no UI)
+	            readNewErrorLogLines();
+	            // Send data
+	            saveEventDataAndSendtoServer(PlatformUI.getWorkbench());
+	        } catch (Throwable t) {
+	            t.printStackTrace();
+	        } finally {
+	            sendInFlight.set(false);
+	        }
+	    }, 0, 10, TimeUnit.MINUTES);
+	    
 	}
 
 
@@ -228,6 +326,13 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
         if(popupListener !=null) {
         	popupListener.stopTrackingPopups();
         	popupListener = null;
+        }
+        
+        //stop scheduler
+        if (sendTask != null) sendTask.cancel(false);
+        if (scheduler != null) {
+            scheduler.shutdownNow();
+            scheduler = null;
         }
 		plugin = null;
 		super.stop(context);
@@ -351,11 +456,10 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 	
 
 	private static String getKeyFromFile(String key) {
-//		IPath workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 		String userHome = System.getProperty("user.home");	
 		IPath filePath = new Path(FILE_PATH);
 		IPath userHomePath = new Path(userHome);
-//		IPath absolutePath = workspaceLocation.append(filePath);
+
 		IPath absolutePath = userHomePath.append(filePath);
 		String absolutePathString = absolutePath.toOSString();
 		if (!absolutePath.toFile().exists()) {
@@ -376,11 +480,9 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
     }
 	
 	private static void saveKeysToFile(String[] keys) {
-//		IPath workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 		String userHome = System.getProperty("user.home");	
 		IPath filePath = new Path(FILE_PATH);
 		IPath userHomePath = new Path(userHome);
-//		IPath absolutePath = workspaceLocation.append(filePath);
 		IPath absolutePath = userHomePath.append(filePath);
 		String absolutePathString = absolutePath.toOSString();
 		try (OutputStream output = new FileOutputStream(absolutePathString)) {
@@ -399,66 +501,8 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 			System.out.println("Exception Happened due to: " + io.getMessage());
 		}
 	}
-	
-	public void getWorkSpceErrorLog() throws PartInitException{
-		//Error Log Collections
-		errorLogList = new ArrayList<>();
-		IViewPart viewPart;
-		try {
-			PlatformUI.getWorkbench().getWorkbenchWindows()[0].getPages()[0].showView("org.eclipse.pde.runtime.LogView");
-			viewPart = PlatformUI.getWorkbench().getWorkbenchWindows()[0].getPages()[0].findView("org.eclipse.pde.runtime.LogView");
-		} catch (Exception e) {
-			return;
-		}
-//		if(lastIneretedErrorLogDateTime ==null) {
-//			Calendar calendar = Calendar.getInstance();
-//	        Date currDate = calendar.getTime();
-//	        lastIneretedErrorLogDateTime = currDate;
-//		}
-		
-//		System.out.println(viewPart.getTitle());
-		LogView logview = (LogView) viewPart;
-//	        System.out.println(logview.getContentDescription());
-//	        System.out.println(logview.getTitle());
-//	        System.out.println(logview.getPartName());
 
-		AbstractEntry[] logs = logview.getElements();
-		
-		for (AbstractEntry entry : logs) {
-			String severity = entry.toString();
-			String message = entry.getAdapter(LogEntry.class).getMessage();
-			String pluginId = entry.getAdapter(LogEntry.class).getPluginId();
-			Date dateErrorLog = null;
-			try {
-				dateErrorLog = dateFormat.parse(entry.getAdapter(LogEntry.class).getFormattedDate());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			String sessionData = entry.getAdapter(LogEntry.class).getSession().getSessionData();
-			if(lastIneretedErrorLogDateTime == null) {
-				WorkSpaceLog wsl = new WorkSpaceLog(dateErrorLog, severity, pluginId, message, sessionData);
-				errorLogList.add(wsl);
-			}
-			else if(lastIneretedErrorLogDateTime.before(dateErrorLog)) { //Note: note considering  any log from previous sessions.// || lastIneretedErrorLogDateTime.equals(dateErrorLog)) {
-				WorkSpaceLog wsl = new WorkSpaceLog(dateErrorLog, severity, pluginId, message, sessionData);
-				errorLogList.add(wsl);
-			}
-			
-		}
-		Collections.sort(errorLogList);
-		try {
-			if(errorLogList.size()>0) {
-				lastIneretedErrorLogDateTime = dateFormat.parse(errorLogList.get(errorLogList.size() -1).getDate());
-				System.out.println("The last date for the error log is:"+lastIneretedErrorLogDateTime.toString());
-			}
-			
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//return errorLogList;
-	}
+	
 	@Override
 	public void earlyStartup() {
 		// TODO Auto-generated method stub
@@ -491,61 +535,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		System.out.println("DESCRIPTION: " + workspace.getRoot().getLocation().toOSString());
 		
-		
-
-		
-		workbench.addWindowListener(new IWindowListener() {
-
-			@Override
-			public void windowOpened(IWorkbenchWindow window) {
-				// TODO Auto-generated method stub
-				System.out.println("Current Active window: "+window.getActivePage().getLabel());
-				addSelectionListener(window);
-
-			}
-
-			@Override
-			public void windowDeactivated(IWorkbenchWindow window) {
-				// TODO Auto-generated method stub
-				System.out.println("window got deactivated at time." + new Date().toString());
-				System.out.println("activated window: "+window.getWorkbench().getActiveWorkbenchWindow().getPages().getClass().getName());
-				String window_Name = window.getWorkbench().getActiveWorkbenchWindow().getPages().getClass().getName(); 
-				//System.out.println("Time to get activated the window. "+new Date().toString());
-				SequentialEventData sed = new SequentialEventData("Window Deactivated", window_Name);
-				listSequntialevents.add(sed);
-				//could capture the event of idle So we can calculate that
-
-			}
-
-			@Override
-			public void windowClosed(IWorkbenchWindow window) {
-				// TODO Auto-generated method stub
-				window.getWorkbench().removeWindowListener(this);
-				saveEventDataAndSendtoServer(workbench);
-				removeSelectionListener(window);
-//				window.
-//				PlatformUI.getWorkbench().close();
-			}
-
-			@Override
-			public void windowActivated(IWorkbenchWindow window) {
-				// TODO Auto-generated method stub
-				System.out.println("activated window: "+window.getWorkbench().getActiveWorkbenchWindow().getPages().getClass().getName());
-				String window_Name = window.getWorkbench().getActiveWorkbenchWindow().getPages().getClass().getName(); 
-				//System.out.println("Time to get activated the window. "+new Date().toString());
-				SequentialEventData sed = new SequentialEventData("Window Activated", window_Name);
-				listSequntialevents.add(sed);
-
-			}
-		});
-		
-		// ConsoleHandler ch = new ConsoleHandler();
-
 		ICommandService commandService = workbench.getService(ICommandService.class);
-//		IHandlerService handlerService = workbench.getService(IHandlerService.class);
-		// Example: Record a user action on startup
-		// recordUserAction("org.eclipse.ui.file.save",commandService,handlerService);
-
 		// Example: Record a user action when a command is executed
 		commandService.addExecutionListener(new IExecutionListener() {
 
@@ -579,20 +569,6 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 			}
 		});
 
-		// getting error logs
-//		IViewCategory wp = workbench.getViewRegistry().getCategories()[7];
-//		IViewDescriptor [] descriptor =  wp.getViews();
-//		
-//		for(IViewDescriptor des: descriptor) {
-//			System.out.println(des.getId());
-//			if(des.getId().equals("org.eclipse.pde.runtime.LogView")) {
-//				LogEntry le = des.getAdapter(LogEntry.class);
-//				System.out.println(des.getId());
-//			}
-//			
-//		}
-
-
 		ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(new IConsoleListener() {
 
 			@Override
@@ -608,61 +584,170 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 			}
 
 			@Override
-			public void consolesAdded(IConsole[] consoles) {
-				// TODO Auto-generated method stub
-				for (IConsole console : consoles) {
-					System.out.println("console output:" + console.getName());
-					if (console instanceof TextConsole) {
-
-						TextConsole textConsole = (TextConsole) console;
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						IDocument document = textConsole.getDocument();
-						String consoleContents = document.get();
-						System.out.println("Console Contents:");
-						System.out.println(consoleContents);
-						SequentialEventData sed = new SequentialEventData("ConsoleOutputEvent", consoleContents);
-						listSequntialevents.add(sed);
-					}
-				}
-			}
+		    public void consolesAdded(IConsole[] consoles) {
+		        // marshal to UI thread to avoid Invalid thread access during console notifications
+		        Display.getDefault().asyncExec(() -> {
+		            for (IConsole console : consoles) {
+		                System.out.println("console output: " + console.getName());
+		                if (console instanceof TextConsole) {
+		                    try {
+		                        TextConsole textConsole = (TextConsole) console;
+		                        IDocument document = textConsole.getDocument(); // safe on UI thread
+		                        String consoleContents = document != null ? document.get() : "";
+		                        System.out.println("Console Contents:");
+		                        System.out.println(consoleContents);
+		                        listSequntialevents.add(
+		                            new SequentialEventData("ConsoleOutputEvent", consoleContents)
+		                        );
+		                    } catch (Throwable t) {
+		                        // never throw from listener; just log
+		                        t.printStackTrace();
+		                    }
+		                }
+		            }
+		        });
+		    }
 		});
 	
-		
-		//create a Time instance
-		Timer timer = new Timer();
-		TimerTask task = new TimerTask() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				saveEventDataAndSendtoServer(workbench);
-			}
-		};
-
-		timer.schedule(task, 0,600000);
-//		timer.schedule(task, 0,10000);
 	}
 
+	// backfill once at startup from .metadata/.log (no UI)
+	private void backfillErrorLogFromFileOnce() {
+	    try {
+	        IPath ws = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+	        java.nio.file.Path logPath = ws.append(".metadata").append(".log").toFile().toPath();
+	        if (!Files.exists(logPath)) return;
+
+	        long size = Files.size(logPath);
+	        // read entire file first time
+	        readLogChunk(logPath, 0, size, /*addToBuffer=*/true);
+	        logFileCursor = size;
+	    } catch (Exception ignore) {
+	        System.out.println("Exception Happening from backfillErrorLogFromFileOnce because: "+ignore.getMessage());
+	    }
+	}
+	
+	//read only new bytes into buffer (called on each tick)
+	private void readNewErrorLogLines() {
+	    try {
+	        IPath ws = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+	        java.nio.file.Path logPath = ws.append(".metadata").append(".log").toFile().toPath();
+	        if (!Files.exists(logPath)) return;
+
+	        long size = Files.size(logPath);
+	        if (logFileCursor < 0) {
+	            // in case backfill didn't run
+	            backfillErrorLogFromFileOnce();
+	            return;
+	        }
+	        if (size <= logFileCursor) return; // nothing new
+
+	        readLogChunk(logPath, logFileCursor, size, /*addToBuffer=*/true);
+	        logFileCursor = size;
+	    } catch (Exception ignore) {
+	    	System.out.println("Exception Happening from readNewErrorLogLines because: "+ignore.getMessage());
+	    }
+	}
+	
+	// minimal parser: convert lines to WorkSpaceLog
+	private void readLogChunk(java.nio.file.Path logPath, long start, long end, boolean addToBuffer) throws Exception {
+	    if (end <= start) return;
+	    try (SeekableByteChannel ch = Files.newByteChannel(logPath, StandardOpenOption.READ)) {
+	        ch.position(start);
+	        ByteBuffer buf = ByteBuffer.allocate(8192);
+	        StringBuilder sb = new StringBuilder();
+	        long toRead = end - start;
+	        while (toRead > 0) {
+	            int n = ch.read(buf);
+	            if (n <= 0) break;
+	            toRead -= n;
+	            buf.flip();
+	            sb.append(StandardCharsets.UTF_8.decode(buf));
+	            buf.clear();
+	        }
+
+	        String[] lines = sb.toString().split("\\R");
+	        String currentSessionData = null;
+	        for (int i = 0; i < lines.length; i++) {
+	            String line = lines[i];
+	            if (line == null || line.isEmpty()) continue;
+
+	            // --- Capture a !SESSION block (title + subsequent property lines) ---
+	            
+	            if (line.startsWith("!SESSION")) {
+	                // Example: "!SESSION 2025-08-19 20:45:33.724 -----------------------------------------------"
+	                StringBuilder sess = new StringBuilder();
+	                sess.append(line);
+
+	                // slurp subsequent lines until the next !ENTRY / !SESSION / !MESSAGE / !SUBENTRY / !STACK or dashed line
+	                int j = i + 1;
+	                while (j < lines.length) {
+	                    String l2 = lines[j];
+	                    if (l2 == null) break;
+	                    String t = l2.trim();
+
+	                    if (t.startsWith("!ENTRY") || t.startsWith("!SESSION") ||
+	                        t.startsWith("!MESSAGE") || t.startsWith("!SUBENTRY") ||
+	                        t.startsWith("!STACK") || t.startsWith("--------------------------------")) {
+	                        break;
+	                    }
+
+	                    if (!t.isEmpty()) {
+	                        sess.append("\n").append(l2);
+	                    }
+	                    j++;
+	                }
+
+	                currentSessionData = sess.toString();
+	                i = j - 1; // advance outer loop to where we stopped
+	                continue;
+	            }
+
+	            // --- Infer severity & plugin id (lightweight) ---
+	            String severity = "INFO";
+	            String pluginId = null;
+
+	            if (line.startsWith("!ENTRY")) {
+	                // Format: !ENTRY <pluginId> <severityNum> <code> <timestamp...>
+	                String[] parts = line.split("\\s+");
+	                if (parts.length >= 3) {
+	                    pluginId = parts[1];
+	                    String sevNum = parts[2];
+	                    if ("4".equals(sevNum))       severity = "ERROR";
+	                    else if ("2".equals(sevNum) ||
+	                             "1".equals(sevNum))  severity = "WARN";
+	                    else                           severity = "INFO";
+	                }
+	            } else if (line.contains("ERROR")) {
+	                severity = "ERROR";
+	            } else if (line.contains("WARN")) {
+	                severity = "WARN";
+	            }
+
+	            // --- Build your log object, including the current session block ---
+	            WorkSpaceLog wsl = new WorkSpaceLog(new Date(), severity, pluginId, line, currentSessionData);
+
+	            // NOTE: use whichever buffer you actually send with (errorLogBuffer vs errorLogList)
+	            if (addToBuffer) {
+	                // If you adopted the buffered approach:
+	                // errorLogBuffer.add(wsl);
+	                // If you kept errorLogList:
+	                errorLogList.add(wsl);
+	            }
+	        }
+	    }
+	}
+
+	
 	public void saveEventDataAndSendtoServer(IWorkbench workbench) {
-		workbench.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				try {
-					getWorkSpceErrorLog();
-				} catch (PartInitException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
-					addSelectionListener(window);
-				}
-			}
-		});
 		
+		List<WorkSpaceLog> logsToSend;
+	    synchronized (errorLogList) {
+	        logsToSend = new ArrayList<>(errorLogList);
+	        errorLogList.clear();
+	    }
+//	    this.errorLogList = logsToSend; // keep your existing payload structure happy
+	
 		//Getting OS Version
 		String osName = System.getProperty("os.name");
 		String osVersion = System.getProperty("os.version");
@@ -697,7 +782,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		//sort based on the event time
 		Collections.sort(listSequntialevents, new EventTimeComparator());
 		
-		EventDataJsonObject edjo = new EventDataJsonObject(listSequntialevents,errorLogList);
+		EventDataJsonObject edjo = new EventDataJsonObject(listSequntialevents,logsToSend);
 //		System.out.println("EDJO"+edjo);
 		edjo.setIPAddress(Utils.getIpAddress());
 		edjo.setMACAddress(Utils.getMacAddress());
@@ -706,17 +791,10 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		edjo.setJavaInfo(javaVersion, javaVendor);
 		edjo.setEclipseInfo(eclipseVersion);
 		System.out.println("retrived key would be: ");
-		//System.out.println(retriveKey());
-		//Save as json
-//		ObjectMapper mapper = new ObjectMapper();
 		Gson gson = new Gson();
-		//mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 		try {
-//			String jsonString = mapper.writeValueAsString(edjo);
 			JsonElement jsonString = gson.toJsonTree(edjo);
 			//file save code
-//			String workingDir = Paths.get(System.getProperty("user.dir"),"Data").toAbsolutePath().toString();
-//			String workingDir = "H:\\NCSU Semesters\\Research_Eclipse_Plugin\\Data\\test_another.json";
 			IPath workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 			String workingDir = new Date().getTime()+".json";
 			IPath filePath = new Path(workingDir);
@@ -752,7 +830,6 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			System.out.println("Exception happened. "+e.getMessage());
-			e.printStackTrace();
 		}
 		
 		System.out.println("Timer Task has been called.");
@@ -800,153 +877,353 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
         }
 	}
 
-	
 	private void recordUserAction(String commandId, ICommandService commandService, IWorkbench workbench) {
-		try {
-			//System.out.println("Key Board Data: "+keyBoardClickEvents.getContents());
-			//System.out.println("Mouse Click Data: "+mouseClickData);
-			//System.out.println("Console Output Data: "+consoleOutput);
-			//System.out.println("MenubarClick Data: "+MenuBarClickActions);
-//			System.out.println("WorkSpaceErrorLog Data: "+errorLogList);
-			System.out.println("Activator");
-			keyBoardClickListener.immediateSave();
-			Map<String, String> parameters = new HashMap<>();
-			String [] commandStr = commandId.split("\\.");
-			String activePart = commandStr[commandStr.length-2];
-			
-			// parameters.put(commandId, pr1)
-			Command command = commandService.getCommand(commandId);
-			SequentialEventData menuSED = new  SequentialEventData("MenuBarClickEvent", commandId);
-			listSequntialevents.add(menuSED);
-//			MenuBarClickActions.add(new MenuBarClickData(commandId));
-			System.out.println("Recorded action: " + commandId);
-//			if(activePart.equals("views")) {
-//				IViewPart viewPart = workbench.getActiveWorkbenchWindow().getActivePage().findView(commandId);
-//				viewPart.getViewSite().getPage().addSelectionListener(new ViewSelectionListener());
-//			}
-			if (commandId.contains("copy")) {
-				System.out.println("This is a copy event:");
-				Display display = workbench.getDisplay();
-				display.timerExec(200, new Runnable() { // adding delay on the code to get the current copy event
+	    try {
+	        // Non-UI: record the command ID immediately
+	        SequentialEventData menuSED = new SequentialEventData("MenuBarClickEvent", commandId);
+	        listSequntialevents.add(menuSED);
+	        System.out.println("Recorded action: " + commandId);
 
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						Clipboard clipboard = new Clipboard(display);
-						Object contents = clipboard.getContents(TextTransfer.getInstance());
-						clipboard.dispose();
-						if (contents instanceof String) {
-//							String key = "copy Event " + copyCounter.toString();
-							UserActionData uad = new UserActionData(contents.toString(), GlobalVars.lastOpenFile, GlobalVars.activeProject);
-							SequentialEventData menuCopy = new  SequentialEventData("CopyEvent", uad);
-							listSequntialevents.add(menuCopy);
-//							cutcopyPasteEvents.add(new CutCopyPasteEvent("Copy", contents.toString()));
-							System.out.println(uad);
-						}
-					}
-				});
-			} else if (commandId.contains("cut")) {
-				System.out.println("This is a cut event:");
-				Display display = workbench.getDisplay();
-				display.timerExec(200, new Runnable() { // adding delay on the code to get the current copy event
+	        // All UI work must be inside asyncExec
+	        Display display = workbench.getDisplay();
+	        if (display == null || display.isDisposed()) return;
 
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						Clipboard clipboard = new Clipboard(display);
-						Object contents = clipboard.getContents(TextTransfer.getInstance());
-						clipboard.dispose();
+	        display.asyncExec(() -> {
+	            try {
+	                // Make sure our keyboard listener flush runs on UI too
+	                if (keyBoardClickListener != null) {
+	                    keyBoardClickListener.immediateSave();
+	                }
 
-						if (contents instanceof String) {
-							UserActionData uad = new UserActionData(contents.toString(), GlobalVars.lastOpenFile, GlobalVars.activeProject);
-							SequentialEventData menuCut = new  SequentialEventData("CutEvent", uad);
-							listSequntialevents.add(menuCut);
-//							cutcopyPasteEvents.add(new CutCopyPasteEvent("Cut", contents.toString()));
-							System.out.println(uad);
-						}
-					}
-				});
-			} else if (commandId.contains("paste")) {
-				System.out.println("This is a paste event:");
-				Display display = workbench.getDisplay();
-				display.timerExec(200, new Runnable() { // adding delay on the code to get the current copy event
-
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						Clipboard clipboard = new Clipboard(display);
-						Object contents = clipboard.getContents(TextTransfer.getInstance());
-						clipboard.dispose();
-
-						if (contents instanceof String) {
-							UserActionData uad = new UserActionData(contents.toString(), GlobalVars.lastOpenFile, GlobalVars.activeProject);
-							SequentialEventData menuPaste = new  SequentialEventData("PasteEvent", uad);
-							listSequntialevents.add(menuPaste);
-//							cutcopyPasteEvents.add(new CutCopyPasteEvent("Paste", contents.toString()));
-							System.out.println(uad);
-						}
-					}
-				});
-			} else if (commandId.contains("selectAll")) {
-				System.out.println("This is a Select All event:");
-				ITextEditor editor = (ITextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-						.getActiveEditor();
-				IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
-				String selectedText = document.get();
-				System.out.println("Selected Text: " + selectedText);
-				// Now you can use 'selectedText' as the contents of the select all action
-				UserActionData uad = new UserActionData(selectedText, GlobalVars.lastOpenFile,
-						GlobalVars.activeProject);
-				SequentialEventData menuSelectAll = new SequentialEventData("selectAll", uad);
-				listSequntialevents.add(menuSelectAll);
-				System.out.println(uad);
-			} else if (commandId.contains("delete")) {
-				System.out.println("This is a delete event:");
-				ITextEditor editor = (ITextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-						.getActiveEditor();
-				IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
-				String deletedText = document.get();
-				System.out.println("Selected Text: " + deletedText);
-				UserActionData uad = new UserActionData(deletedText, GlobalVars.lastOpenFile,
-						GlobalVars.activeProject);
-				SequentialEventData menuDelete= new SequentialEventData("Delete", uad);
-				listSequntialevents.add(menuDelete);
-				System.out.println(uad);
-			}
-
-		} catch (Exception e) {
-			showErrorDialog("Error recording user action", e);
-		}
-	}
-
-	private void showErrorDialog(String message, Throwable throwable) {
-		IStatus status = new Status(IStatus.ERROR, getBundle().getSymbolicName(), message, throwable);
-		ErrorDialog.openError(null, "Error", null, status);
-	}
-
-	private void addSelectionListener(IWorkbenchWindow window) {
-		
-		if (window != null) {
-			keyBoardClickListener = new KeyBoardClickListener(window);
-			mouseClickListener = new MouseClickListener(window, keyBoardClickListener);
-			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.MouseDown, mouseClickListener);
-			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.MouseDoubleClick,mouseClickListener);
-			window.getShell().getDisplay().addFilter(org.eclipse.swt.SWT.KeyDown, keyBoardClickListener);	
-			window.getSelectionService().addSelectionListener(new ISelectionListener() {
-	            @Override
-	            public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-	                handleSelectionChange(part, selection);
+	                if (commandId.contains("copy")) {
+	                    display.timerExec(200, () -> {
+	                    	Clipboard clipboard = new Clipboard(display);
+	                        try{
+	                            Object contents = clipboard.getContents(TextTransfer.getInstance());
+	                            if (contents instanceof String) {
+	                                UserActionData uad = new UserActionData(
+	                                        contents.toString(), GlobalVars.lastOpenFile, GlobalVars.activeProject);
+	                                listSequntialevents.add(new SequentialEventData("CopyEvent", uad));
+	                                System.out.println(uad);
+	                            }
+	                        } catch (Throwable ignored) {}
+	                    });
+	                } else if (commandId.contains("cut")) {
+	                    display.timerExec(200, () -> {
+	                    	Clipboard clipboard = new Clipboard(display);
+	                        try{
+	                            Object contents = clipboard.getContents(TextTransfer.getInstance());
+	                            if (contents instanceof String) {
+	                                UserActionData uad = new UserActionData(
+	                                        contents.toString(), GlobalVars.lastOpenFile, GlobalVars.activeProject);
+	                                listSequntialevents.add(new SequentialEventData("CutEvent", uad));
+	                                System.out.println(uad);
+	                            }
+	                        } catch (Throwable ignored) {}
+	                    });
+	                } else if (commandId.contains("paste")) {
+	                    display.timerExec(200, () -> {
+	                    	Clipboard clipboard = new Clipboard(display);
+	                        try{
+	                            Object contents = clipboard.getContents(TextTransfer.getInstance());
+	                            if (contents instanceof String) {
+	                                UserActionData uad = new UserActionData(
+	                                        contents.toString(), GlobalVars.lastOpenFile, GlobalVars.activeProject);
+	                                listSequntialevents.add(new SequentialEventData("PasteEvent", uad));
+	                                System.out.println(uad);
+	                            }
+	                        } catch (Throwable ignored) {}
+	                    });
+	                } else if (commandId.contains("selectAll")) {
+	                    try {
+	                        IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	                        if (ww != null && ww.getActivePage() != null) {
+	                            IEditorPart ep = ww.getActivePage().getActiveEditor();
+	                            if (ep instanceof ITextEditor) {
+	                                ITextEditor editor = (ITextEditor) ep;
+	                                IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+	                                String selectedText = (doc != null) ? doc.get() : "";
+	                                UserActionData uad = new UserActionData(selectedText, GlobalVars.lastOpenFile, GlobalVars.activeProject);
+	                                listSequntialevents.add(new SequentialEventData("selectAll", uad));
+	                                System.out.println(uad);
+	                            }
+	                        }
+	                    } catch (Throwable ignored) {}
+	                } else if (commandId.contains("delete")) {
+	                    try {
+	                        IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	                        if (ww != null && ww.getActivePage() != null) {
+	                            IEditorPart ep = ww.getActivePage().getActiveEditor();
+	                            if (ep instanceof ITextEditor) {
+	                                ITextEditor editor = (ITextEditor) ep;
+	                                IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+	                                String deletedText = (doc != null) ? doc.get() : "";
+	                                UserActionData uad = new UserActionData(deletedText, GlobalVars.lastOpenFile, GlobalVars.activeProject);
+	                                listSequntialevents.add(new SequentialEventData("Delete", uad));
+	                                System.out.println(uad);
+	                            }
+	                        }
+	                    } catch (Throwable ignored) {}
+	                }
+	            } catch (Throwable uiEx) {
+	                showErrorDialog("Error recording user action (UI)", uiEx);
 	            }
 	        });
-			window.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new WindowClickListener(listSequntialevents,window,keyBoardClickListener));
-
-		}
-
+	    } catch (Throwable e) {
+	        showErrorDialog("Error recording user action", e);
+	    }
 	}
 
+//	private void recordUserAction(String commandId, ICommandService commandService, IWorkbench workbench) {
+//		try {
+//			System.out.println("Activator");
+//			keyBoardClickListener.immediateSave();
+//			Map<String, String> parameters = new HashMap<>();
+//			String [] commandStr = commandId.split("\\.");
+//			String activePart = commandStr[commandStr.length-2];
+//			
+//			// parameters.put(commandId, pr1)
+//			Command command = commandService.getCommand(commandId);
+//			SequentialEventData menuSED = new  SequentialEventData("MenuBarClickEvent", commandId);
+//			listSequntialevents.add(menuSED);
+////			MenuBarClickActions.add(new MenuBarClickData(commandId));
+//			System.out.println("Recorded action: " + commandId);
+//
+//			if (commandId.contains("copy")) {
+//				System.out.println("This is a copy event:");
+//				Display display = workbench.getDisplay();
+//				display.timerExec(200, new Runnable() { // adding delay on the code to get the current copy event
+//
+//					@Override
+//					public void run() {
+//						// TODO Auto-generated method stub
+//						Clipboard clipboard = new Clipboard(display);
+//						Object contents = clipboard.getContents(TextTransfer.getInstance());
+//						clipboard.dispose();
+//						if (contents instanceof String) {
+////							String key = "copy Event " + copyCounter.toString();
+//							UserActionData uad = new UserActionData(contents.toString(), GlobalVars.lastOpenFile, GlobalVars.activeProject);
+//							SequentialEventData menuCopy = new  SequentialEventData("CopyEvent", uad);
+//							listSequntialevents.add(menuCopy);
+////							cutcopyPasteEvents.add(new CutCopyPasteEvent("Copy", contents.toString()));
+//							System.out.println(uad);
+//						}
+//					}
+//				});
+//			} else if (commandId.contains("cut")) {
+//				System.out.println("This is a cut event:");
+//				Display display = workbench.getDisplay();
+//				display.timerExec(200, new Runnable() { // adding delay on the code to get the current copy event
+//
+//					@Override
+//					public void run() {
+//						// TODO Auto-generated method stub
+//						Clipboard clipboard = new Clipboard(display);
+//						Object contents = clipboard.getContents(TextTransfer.getInstance());
+//						clipboard.dispose();
+//
+//						if (contents instanceof String) {
+//							UserActionData uad = new UserActionData(contents.toString(), GlobalVars.lastOpenFile, GlobalVars.activeProject);
+//							SequentialEventData menuCut = new  SequentialEventData("CutEvent", uad);
+//							listSequntialevents.add(menuCut);
+////							cutcopyPasteEvents.add(new CutCopyPasteEvent("Cut", contents.toString()));
+//							System.out.println(uad);
+//						}
+//					}
+//				});
+//			} else if (commandId.contains("paste")) {
+//				System.out.println("This is a paste event:");
+//				Display display = workbench.getDisplay();
+//				display.timerExec(200, new Runnable() { // adding delay on the code to get the current copy event
+//
+//					@Override
+//					public void run() {
+//						// TODO Auto-generated method stub
+//						Clipboard clipboard = new Clipboard(display);
+//						Object contents = clipboard.getContents(TextTransfer.getInstance());
+//						clipboard.dispose();
+//
+//						if (contents instanceof String) {
+//							UserActionData uad = new UserActionData(contents.toString(), GlobalVars.lastOpenFile, GlobalVars.activeProject);
+//							SequentialEventData menuPaste = new  SequentialEventData("PasteEvent", uad);
+//							listSequntialevents.add(menuPaste);
+////							cutcopyPasteEvents.add(new CutCopyPasteEvent("Paste", contents.toString()));
+//							System.out.println(uad);
+//						}
+//					}
+//				});
+//			} else if (commandId.contains("selectAll")) {
+//				System.out.println("This is a Select All event:");
+//				ITextEditor editor = (ITextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+//						.getActiveEditor();
+//				IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+//				String selectedText = document.get();
+//				System.out.println("Selected Text: " + selectedText);
+//				// Now you can use 'selectedText' as the contents of the select all action
+//				UserActionData uad = new UserActionData(selectedText, GlobalVars.lastOpenFile,
+//						GlobalVars.activeProject);
+//				SequentialEventData menuSelectAll = new SequentialEventData("selectAll", uad);
+//				listSequntialevents.add(menuSelectAll);
+//				System.out.println(uad);
+//			} else if (commandId.contains("delete")) {
+//				System.out.println("This is a delete event:");
+//				ITextEditor editor = (ITextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+//						.getActiveEditor();
+//				IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+//				String deletedText = document.get();
+//				System.out.println("Selected Text: " + deletedText);
+//				UserActionData uad = new UserActionData(deletedText, GlobalVars.lastOpenFile,
+//						GlobalVars.activeProject);
+//				SequentialEventData menuDelete= new SequentialEventData("Delete", uad);
+//				listSequntialevents.add(menuDelete);
+//				System.out.println(uad);
+//			}
+//
+//		} catch (Exception e) {
+//			showErrorDialog("Error recording user action", e);
+//		}
+//	}
+
+	private void showErrorDialog(String message, Throwable throwable) {
+	    IStatus status = new Status(IStatus.ERROR, getBundle().getSymbolicName(), message, throwable);
+	    Display display = Display.getDefault();
+	    if (display == null || display.isDisposed()) return;
+	    display.asyncExec(() -> {
+	        if (!display.isDisposed()) {
+	            ErrorDialog.openError(null, "Error", null, status);
+	        }
+	    });
+	}
+
+
+	private final ISelectionListener globalSelectionListener = (part, selection) -> {
+	    handleSelectionChange(part, selection);
+	};
+	
+	private void addSelectionListener(IWorkbenchWindow window) {
+	    if (window == null) return;
+
+	    Display display = window.getShell().getDisplay();
+	    Runnable register = () -> {
+	        if (window.getShell() == null || window.getShell().isDisposed()) return;
+
+	        // avoid duplicates on the same window
+	        if (Boolean.TRUE.equals(window.getShell().getData(KEY_LISTENERS_ADDED))) return;
+
+	        // set up your listeners once for this window
+	        keyBoardClickListener = new KeyBoardClickListener(window);
+	        mouseClickListener   = new MouseClickListener(window, keyBoardClickListener);
+
+	        display.addFilter(org.eclipse.swt.SWT.MouseDown,        mouseClickListener);
+	        display.addFilter(org.eclipse.swt.SWT.MouseDoubleClick, mouseClickListener);
+	        display.addFilter(org.eclipse.swt.SWT.KeyDown,          keyBoardClickListener);
+
+	        // use *post* selection to get final selection after UI settles
+	        window.getSelectionService().addPostSelectionListener(globalSelectionListener);
+
+	        // safer: use this window's PartService instead of re-fetching the active window
+	        window.getPartService().addPartListener(new WindowClickListener(
+	                listSequntialevents, window, keyBoardClickListener));
+
+	        // mark as wired
+	        window.getShell().setData(KEY_LISTENERS_ADDED, Boolean.TRUE);
+	    };
+
+	    // run on UI thread
+	    if (Display.getCurrent() == display) {
+	        register.run();
+	    } else {
+	        display.asyncExec(register);
+	    }
+	}
+
+	
 	private void handleSelectionChange(IWorkbenchPart part, ISelection selection) {
 		// TODO Auto-generated method stub
-		System.out.println("Selection Happened in: "+part.getTitle());
+//		System.out.println("Selection Happened in: "+part.getTitle());
+		System.out.println("Selection Happened in: " + (part != null ? part.getTitle() : "<unknown>"));
+		
+		if (selection == null) {
+	        System.out.println("Selection is null.");
+	        return;
+	    }
+
+	    // --- A) Text inside an editor (e.g., selecting "dfdsdfsdnfsdfsdjfkljl ...") ---
+	    if (selection instanceof ITextSelection) {
+	        ITextSelection ts = (ITextSelection) selection;
+
+	        // Ignore caret-only moves if you want only real selections
+	        if (ts.getLength() <= 0) {
+	            System.out.println("Text selection length = 0 (caret move).");
+	            return;
+	        }
+
+	        String fileName = "<unknown>";
+	        String projectName = "<unknown>";
+	        String selectedText = null;
+	        int line = ts.getStartLine() + 1;  // 1-based
+	        int column = 1;
+
+	        try {
+	            // Try to get the active editor’s document to extract the text & column
+	            ITextEditor textEditor = part.getAdapter(ITextEditor.class);
+	            if (textEditor == null && part instanceof IEditorPart) {
+	                // Some editors don’t adapt directly—try site’s selection provider later
+	                textEditor = (ITextEditor) ((IEditorPart) part).getAdapter(ITextEditor.class);
+	            }
+
+	            if (textEditor != null) {
+	                IDocumentProvider provider = textEditor.getDocumentProvider();
+	                IDocument doc = provider.getDocument(textEditor.getEditorInput());
+
+	                // Compute 1-based column from offset within the line
+	                try {
+	                    IRegion lineInfo = doc.getLineInformation(ts.getStartLine());
+	                    column = (ts.getOffset() - lineInfo.getOffset()) + 1;
+	                } catch (org.eclipse.jface.text.BadLocationException ignore) {}
+
+	                // Extract selected text safely
+	                int offset = ts.getOffset();
+	                int length = ts.getLength();
+	                if (offset >= 0 && length > 0 && offset + length <= doc.getLength()) {
+	                    selectedText = doc.get(offset, length);
+	                }
+
+	                // Derive file name / project name
+	                IEditorInput input = textEditor.getEditorInput();
+	                if (input instanceof IFileEditorInput) {
+	                    IFile file = ((IFileEditorInput) input).getFile();
+	                    if (file != null) {
+	                        fileName = file.getName();
+	                        IProject p = file.getProject();
+	                        if (p != null) projectName = p.getName();
+	                    }
+	                } else if (input instanceof IStorageEditorInput) {
+	                    IStorage storage = ((IStorageEditorInput) input).getStorage();
+	                    if (storage != null) fileName = storage.getName();
+	                }
+	            }
+	        } catch (Throwable t) {
+	            t.printStackTrace();
+	        }
+
+	        System.out.println("Editor text selection in file: " + fileName + " (project: " + projectName + ")");
+	        System.out.println("Line: " + line + ", Column: " + column);
+	        if (selectedText != null) {
+	            System.out.println("Selected text: \"" + selectedText + "\"");
+	        }
+
+	        // Record your event
+	        ProjectExplorerModel pem = new ProjectExplorerModel();
+	        pem.setMouseClick(fileName);
+	        pem.setPathClick(projectName);
+
+	        SequentialEventData sed = new SequentialEventData("EditorTextSelection",
+	                new MouseClickData(column, line, fileName, line, column)); // or define a dedicated model
+	        listSequntialevents.add(sed);
+	        return;
+	    }
+	    
 		 // Handle structured selections like those from the Project Explorer
 		if (selection instanceof IStructuredSelection) {
 		    IStructuredSelection structuredSelection = (IStructuredSelection) selection;
@@ -1072,35 +1349,40 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 
 		System.out.println();
 	}
-	
-	private void removeSelectionListener(IWorkbenchWindow window) {
-		System.out.println("Inside the remove selection listeners");
-		try {
-	        if (window != null) {
-	        	if(window.getWorkbench()!=null) {
-	        		window.getWorkbench().getDisplay().removeFilter(org.eclipse.swt.SWT.MouseDown, mouseClickListener);
-	        		window.getWorkbench().getDisplay().removeFilter(org.eclipse.swt.SWT.MouseDoubleClick,mouseClickListener);
-	        		window.getWorkbench().getDisplay().removeFilter(org.eclipse.swt.SWT.KeyDown, keyBoardClickListener);
-//	        		window.getWorkbench().getActiveWorkbenchWindow().getPartService().removePartListener();
-	        		
-	        	}
-//	        	window.getShell().getDisplay().removeFilter(org.eclipse.swt.SWT.MouseDown, mouseClickListener);
-//	        	window.getShell().getDisplay().removeFilter(org.eclipse.swt.SWT.MouseDoubleClick,mouseClickListener);
-//	            window.getShell().getDisplay().removeFilter(org.eclipse.swt.SWT.KeyDown, new KeyBoardClickListener(keyBoardClickEvents));
-//	            window.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new MenuBarClickListener());
-	            //window.getWorkbench().removeWorkbenchListener(this);
-	        }
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println("Exception happened here."+e.getMessage());
-		}
 
+	private void removeSelectionListener(IWorkbenchWindow window) {
+	    if (window == null) return;
+	    Display display = window.getShell().getDisplay();
+	    Runnable unregister = () -> {
+	        try {
+	            if (window.getShell() == null || window.getShell().isDisposed()) return;
+
+	            // Only remove if we had added
+	            if (!Boolean.TRUE.equals(window.getShell().getData(KEY_LISTENERS_ADDED))) return;
+
+	            display.removeFilter(org.eclipse.swt.SWT.MouseDown,        mouseClickListener);
+	            display.removeFilter(org.eclipse.swt.SWT.MouseDoubleClick, mouseClickListener);
+	            display.removeFilter(org.eclipse.swt.SWT.KeyDown,          keyBoardClickListener);
+
+	            window.getSelectionService().removePostSelectionListener(globalSelectionListener);
+
+	            // If you keep a reference to the WindowClickListener, remove it here too.
+	            // (You can store it in window.getShell().setData("EM_PART_LISTENER", listener) when adding.)
+	            window.getShell().setData(KEY_LISTENERS_ADDED, Boolean.FALSE);
+	        } catch (Throwable t) {
+	            System.out.println("Exception happened here." + t.getMessage());
+	        }
+	    };
+
+	    if (Display.getCurrent() == display) {
+	        unregister.run();
+	    } else {
+	        display.asyncExec(unregister);
+	    }
 	}
 
+	
 	public void reset(IWorkbenchWindow window) {
-
-//		keyBoardClickListener = new KeyBoardClickListener();
-//		mouseClickListener = new MouseClickListener(window);
 		GlobalVars.listSequentialEvents.clear();
 		listSequntialevents = new ArrayList<>();
 	}

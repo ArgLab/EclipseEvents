@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/core_1.0.0.202508201044.jar" id="core" version="1.0.0.202508201044">
+      <category name="Core"/>
+   </feature>
+   <feature url="features/analysis_1.0.0.202508201044.jar" id="analysis" version="1.0.0.202508201044">
+      <category name="Optional"/>
+   </feature>
+   <category-def name="Core" label="Core"/>
+   <category-def name="Optional" label="Optional"/>
+</site>
