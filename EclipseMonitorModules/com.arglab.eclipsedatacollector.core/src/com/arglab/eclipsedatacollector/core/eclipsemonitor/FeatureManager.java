@@ -30,7 +30,7 @@ import com.arglab.eclipsedatacollector.core.eclipsemonitor.utils.Utils;
 
 public class FeatureManager {
 	
-	private static final String UPDATE_SITE_URL = "https://arglab.github.io/EclipseEvents/";
+	private static final String UPDATE_SITE_URL = "https://github.com/ArgLab/EclipseEvents/tree/main/eclipse-monitor-update-site";
 //	private static final String FEATURE_ID_216 = "jenkins.feature.group";
 	private static final String FEATURE_ID_316 = "analysis.feature.group";
 	private String course;
