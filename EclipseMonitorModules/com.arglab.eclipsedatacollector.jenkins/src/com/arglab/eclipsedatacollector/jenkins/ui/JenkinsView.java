@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.part.ViewPart;
 
+import com.arglab.eclipsedatacollector.core.eclipsemonitor.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -81,25 +82,76 @@ public class JenkinsView  extends ViewPart{
 
 
 	private void fetchDataAndDisplay() {
-		InputStream is = getClass().getResourceAsStream("JenkinsTest.json");
-		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            StringBuilder jsonContent = new StringBuilder();
-            String line;
+		String UserId = Utils.getUsernameFromPref();
+		String database = "miner";
+		String repoName = "csc216-GP3-TS";//JenkinsUtil.getActiveProjectAndFile();
+		
+		String userToken = JenkinsUtil.getUserHash(repoName, UserId, database);
+        if (userToken == null) {
+            MessageBox mb = new MessageBox(getSite().getShell(), SWT.ICON_ERROR | SWT.OK);
+            mb.setText("Token error");
+            mb.setMessage("Failed to generate user token.");
+            mb.open();
+            return;
+        }
+        
+        String url = "http://127.0.0.1:8080/api/build-info/latest/" + JenkinsUtil.encodePath(repoName);
 
-            while ((line = reader.readLine()) != null) {
-                jsonContent.append(line);
+        getSite().getShell().setCursor(getSite().getShell().getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
+        viewer.getControl().setEnabled(false);
+        
+        // Do network off the UI thread
+        new Thread(() -> {
+            try {
+                String json = JenkinsUtil.fetchJsonFromApi(url, JenkinsUtil.buildRequestBody(userToken));
+                if (json == null) throw new RuntimeException("Empty response");
+
+                JsonElement root = JsonParser.parseString(json);
+
+                // Update UI
+                Display.getDefault().asyncExec(() -> {
+                    if (viewer.getControl().isDisposed()) return;
+                    viewer.setInput(root);
+                    viewer.expandToLevel(2);
+                    viewer.refresh(true);
+                    viewer.getTree().getColumn(0).pack();
+                    viewer.getControl().setEnabled(true);
+                    getSite().getShell().setCursor(null);
+                });
+            } catch (Throwable t) {
+                t.printStackTrace();
+                Display.getDefault().asyncExec(() -> {
+                    if (!getSite().getShell().isDisposed()) {
+                        getSite().getShell().setCursor(null);
+                        viewer.getControl().setEnabled(true);
+                        MessageBox mb = new MessageBox(getSite().getShell(), SWT.ICON_ERROR | SWT.OK);
+                        mb.setText("Request failed");
+                        mb.setMessage("Could not fetch data:\n" + t.getMessage());
+                        mb.open();
+                    }
+                });
             }
-
-            JsonElement rootElement = JsonParser.parseString(jsonContent.toString());
-
-            viewer.setInput(rootElement);
-
-            viewer.expandToLevel(2);
-
-		    } catch (Exception e) {
-		        e.printStackTrace();
-		    }
+        }, "JenkinsView-Fetch").start();
+        
+//		InputStream is = getClass().getResourceAsStream("JenkinsTest.json");
+//		try {
+//			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+//            StringBuilder jsonContent = new StringBuilder();
+//            String line;
+//
+//            while ((line = reader.readLine()) != null) {
+//                jsonContent.append(line);
+//            }
+//
+//            JsonElement rootElement = JsonParser.parseString(jsonContent.toString());
+//
+//            viewer.setInput(rootElement);
+//
+//            viewer.expandToLevel(2);
+//
+//		    } catch (Exception e) {
+//		        e.printStackTrace();
+//		    }
 	}
 
 	@Override
