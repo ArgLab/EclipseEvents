@@ -22,6 +22,7 @@ import com.google.gson.JsonObject;
 
 public class JenkinsUtil {
 
+<<<<<<< Updated upstream
 	 public static String getActiveProjectAndFile() {
 	        String projectName = null;
 	        String fileName = null;
@@ -37,6 +38,12 @@ public class JenkinsUtil {
 	                        if (input instanceof IFileEditorInput fei) {
 	                            IPath path = fei.getFile().getFullPath();
 	                            String absPath = path.toFile().getAbsolutePath();
+=======
+    private static final String API_BASE =
+        "http://lin-sesmith01.csc.ncsu.edu:8080/api/build-info/latest/";
+
+    private static final String MINER_DB_NAME = "f25_miner"; // ⚠️ verify
+>>>>>>> Stashed changes
 
 	                            // Split by system file separator
 	                            String[] parts = absPath.split(

@@ -112,6 +112,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -517,16 +518,16 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
         }
 		
 		
-		Job initJob = new Job("Initialize Feature Management") {
-            @Override
-            protected IStatus run(IProgressMonitor monitor) {
-                FeatureManager manager = new FeatureManager();
-                manager.installFeatureIfNeeded();
-                return Status.OK_STATUS;
-            }
-        };
-        
-        initJob.schedule(2000);
+//		Job initJob = new Job("Initialize Feature Management") {
+//            @Override
+//            protected IStatus run(IProgressMonitor monitor) {
+//                FeatureManager manager = new FeatureManager();
+//                manager.installFeatureIfNeeded();
+//                return Status.OK_STATUS;
+//            }
+//        };
+//        
+//        initJob.schedule(2000);
         
         System.out.println("Early startup: Feature management scheduled");
 		
@@ -759,6 +760,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		
 		//Getting Eclipse Version
 		String eclipseVersion = Platform.getBundle("org.eclipse.core.runtime").getVersion().toString();
+	
 		
 		List<SequentialEventData> mousEventList = new ArrayList<>();
 		List<SequentialEventData> keyEvents = new ArrayList<>();
@@ -790,6 +792,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 		edjo.setOSInfo(osName, osVersion, osArch);
 		edjo.setJavaInfo(javaVersion, javaVendor);
 		edjo.setEclipseInfo(eclipseVersion);
+		
 		System.out.println("retrived key would be: ");
 		Gson gson = new Gson();
 		try {
@@ -1352,6 +1355,10 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 
 	private void removeSelectionListener(IWorkbenchWindow window) {
 	    if (window == null) return;
+	    Shell shell = window.getShell();
+	    if (shell == null || shell.isDisposed()) {
+	        return; // Window is already disposed, nothing to clean up
+	    }
 	    Display display = window.getShell().getDisplay();
 	    Runnable unregister = () -> {
 	        try {
