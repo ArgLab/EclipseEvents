@@ -1,137 +1,108 @@
 package com.arglab.eclipsedatacollector.jenkins.ui;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.Duration;
-import java.util.regex.Matcher;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-
-import com.google.gson.JsonObject;
+import org.eclipse.core.resources.*;
+import org.eclipse.ui.*;
 
 public class JenkinsUtil {
 
-<<<<<<< Updated upstream
-	 public static String getActiveProjectAndFile() {
-	        String projectName = null;
-	        String fileName = null;
-
-	        try {
-	            IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-	            if (window != null) {
-	                IWorkbenchPage page = window.getActivePage();
-	                if (page != null) {
-	                    IEditorPart editor = page.getActiveEditor();
-	                    if (editor != null) {
-	                        IEditorInput input = editor.getEditorInput();
-	                        if (input instanceof IFileEditorInput fei) {
-	                            IPath path = fei.getFile().getFullPath();
-	                            String absPath = path.toFile().getAbsolutePath();
-=======
     private static final String API_BASE =
         "http://lin-sesmith01.csc.ncsu.edu:8080/api/build-info/latest/";
 
     private static final String MINER_DB_NAME = "f25_miner"; // ⚠️ verify
->>>>>>> Stashed changes
 
-	                            // Split by system file separator
-	                            String[] parts = absPath.split(
-	                                    Matcher.quoteReplacement(System.getProperty("file.separator")));
+    /* ===================== TOKEN ===================== */
 
-	                            // project name (2nd element of path if workspace layout is standard)
-	                            if (parts.length > 1) {
-	                                projectName = parts[1];
-	                            }
+    public static String generateUserToken(
+            String repositoryName,
+            String unityId
+    ) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            String input = unityId + repositoryName + MINER_DB_NAME;
+            byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
 
-	                            fileName = fei.getFile().getName();
+            StringBuilder hex = new StringBuilder();
+            for (byte b : hash) {
+                hex.append(String.format("%02x", b));
+            }
+            return hex.toString();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
-	                            System.out.println("Active path: " + absPath);
-	                            System.out.println("Project: " + projectName);
-	                            System.out.println("File: " + fileName);
-	                        }
-	                    }
-	                }
-	            }
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
+    /* ===================== API CALL ===================== */
 
-	        return projectName;
-	    }
+    public static String fetchLatestBuildJson(
+            String repositoryName,
+            String unityId
+    ) throws Exception {
 
-	 public static String getUserHash(String repositoryName, String unityId, String minerDbName) {
-		// TODO Auto-generated method stub
-			try {
-	    		// Step 1: Get an instance of the SHA-256 MessageDigest.
-	            // This is the standard way to get a cryptographic hash function in Java.
-	            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-	            
-	            String input = unityId + repositoryName + minerDbName;
-//	            System.out.println(input);
-	            // Step 2: Convert the input string into a byte array.
-	            // Using StandardCharsets.UTF_8 ensures consistent hashing across platforms.
-	            byte[] encodedhash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+        String token = generateUserToken(repositoryName, unityId);
+        if (token == null)
+            throw new IllegalStateException("User token generation failed");
 
-	            // Step 3: Convert the byte array into a hexadecimal string.
-	            // This is the standard representation for a hash.
-	            StringBuilder hexString = new StringBuilder(2 * encodedhash.length);
-	            for (byte b : encodedhash) {
-	                // Use bitwise AND with 0xFF to handle negative byte values correctly.
-	                String hex = Integer.toHexString(0xff & b);
-	                if (hex.length() == 1) {
-	                    hexString.append('0'); // Pad with a leading zero if needed.
-	                }
-	                hexString.append(hex);
-	            }
-	            
-	            return hexString.toString();
-	            
-	    	} catch (NoSuchAlgorithmException e) {
-	    		return null;
-	    	}
-	 }
-	 
-	 static String encodePath(String s) {
-	        // Minimal path segment encoding (replace spaces etc.). Adjust if needed.
-	        return s.replace(" ", "%20");
-	    }
-	 
-	 
-	 public static String buildRequestBody(String userToken) {
-	        // Adjust if your API expects a different shape
-	        JsonObject body = new JsonObject();
-	        body.addProperty("userToken", userToken);
-	        return body.toString();
-	    }
-	 
-	 public static String fetchJsonFromApi(String url, String jsonBody) throws Exception {
-	        HttpClient client = HttpClient.newBuilder()
-	                .connectTimeout(Duration.ofSeconds(5))
-	                .build();
+        String urlStr = API_BASE + repositoryName + "?unityId=" + unityId;
+        URL url = new URL(urlStr);
 
-	        HttpRequest request = HttpRequest.newBuilder()
-	                .uri(URI.create(url))
-	                .timeout(Duration.ofSeconds(20))
-	                .header("Content-Type", "application/json")
-	                .POST(HttpRequest.BodyPublishers.ofString(jsonBody, StandardCharsets.UTF_8))
-	                .build();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("X-User-Token", token);
+        conn.setRequestProperty("Accept", "application/json");
+        conn.setConnectTimeout(10000);
+        conn.setReadTimeout(10000);
 
-	        HttpResponse<String> resp = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-	        int code = resp.statusCode();
-	        if (code >= 200 && code < 300) {
-	            return resp.body();
-	        }
-	        throw new RuntimeException("HTTP " + code + ": " + resp.body());
-	    }
+        int status = conn.getResponseCode();
+        if (status != 200) {
+            throw new RuntimeException("HTTP " + status);
+        }
+
+        BufferedReader reader =
+            new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line);
+        }
+
+        reader.close();
+        conn.disconnect();
+
+        return sb.toString();
+    }
+
+    /* ===================== PROJECT DETECTION ===================== */
+
+    public static String detectActiveProjectName() {
+        try {
+            IWorkbenchWindow win =
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+            if (win == null) return null;
+
+            IWorkbenchPage page = win.getActivePage();
+            if (page != null && page.getActiveEditor() != null) {
+                IEditorInput input = page.getActiveEditor().getEditorInput();
+                IFile file = input.getAdapter(IFile.class);
+                if (file != null) {
+                    return file.getProject().getName();
+                }
+            }
+
+            for (IProject p :
+                ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+                if (p.isOpen()) return p.getName();
+            }
+        } catch (Exception ignored) {
+        	System.out.println("Exception Happened due to "+ignored.toString());
+        }
+        return null;
+    }
 }
