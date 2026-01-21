@@ -788,7 +788,7 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
 //		System.out.println("EDJO"+edjo);
 		edjo.setIPAddress(Utils.getIpAddress());
 		edjo.setMACAddress(Utils.getMacAddress());
-		edjo.setPluginVersion("V2.0.2");
+		edjo.setPluginVersion("V2.1.0");
 		edjo.setOSInfo(osName, osVersion, osArch);
 		edjo.setJavaInfo(javaVersion, javaVendor);
 		edjo.setEclipseInfo(eclipseVersion);
