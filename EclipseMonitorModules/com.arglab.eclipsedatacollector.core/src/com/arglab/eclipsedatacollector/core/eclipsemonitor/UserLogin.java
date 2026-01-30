@@ -31,17 +31,16 @@ public class UserLogin extends FieldEditorPreferencePage implements IWorkbenchPr
         addField(new ComboFieldEditor("SEMESTER", "Semester:", semesterOptions, getFieldEditorParent()));
 
         String[][] courseOptions = {
-                {"CSC116", "116"},
                 {"CSC216", "216"},
                 {"CSC316", "316"},
-                {"CSC416", "416"},
             };
         addField(new ComboFieldEditor("COURSE", "Course Number:", courseOptions, getFieldEditorParent()));
 
         String[][] sectionOptions = {
                 {"Section 001", "001"},
                 {"Section 002", "002"},
-                {"Section 003", "003"}
+                {"Section 003", "003"},
+                {"Section 601", "601"}
             };
         addField(new ComboFieldEditor("SECTION", "Section:", sectionOptions, getFieldEditorParent()));
     }

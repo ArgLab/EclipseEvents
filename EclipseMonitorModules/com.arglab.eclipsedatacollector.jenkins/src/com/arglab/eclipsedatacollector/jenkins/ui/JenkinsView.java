@@ -144,6 +144,8 @@ public class JenkinsView  extends ViewPart{
 	private void fetchDataAndDisplay() {
 	    Display.getDefault().asyncExec(() -> {
 	        try {
+	        	
+	        	
 	            String repo = JenkinsUtil.detectActiveProjectName();
 	            if (repo == null) {
 	                System.out.println("No active project detected");
@@ -170,14 +172,21 @@ public class JenkinsView  extends ViewPart{
 				    }
 				});
 
-
-//	            JsonElement root = JsonParser.parseString(json);
-//	            viewer.setInput(root);
-//	            viewer.expandToLevel(2);
-
 	        } catch (Exception e) {
-	        	
-	            System.out.println("Exception Happened here due to "+e.getMessage());
+	        	String msg = "Exception Happened here due to "+e.getMessage();
+	        	String userMsg = "Please check the repo exists with the name and you are connected to eduroam or NCSU VPN";
+	        	JsonObject errorRoot = new JsonObject();
+	            errorRoot.addProperty("Error", userMsg);
+	            
+	            Display.getDefault().asyncExec(() -> {
+				    if (!viewer.getControl().isDisposed()) {
+				        viewer.setInput(errorRoot);
+				        viewer.expandToLevel(2);
+				        getSite().getShell().setCursor(null);
+				        viewer.getControl().setEnabled(true);
+				    }
+				});
+	            System.out.println(msg);
 	        }
 	    });
 	}

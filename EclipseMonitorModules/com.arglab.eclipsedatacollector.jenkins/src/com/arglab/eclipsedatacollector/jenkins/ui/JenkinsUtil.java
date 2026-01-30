@@ -15,7 +15,7 @@ public class JenkinsUtil {
     private static final String API_BASE =
         "http://lin-sesmith01.csc.ncsu.edu:8080/api/build-info/latest/";
 
-    private static final String MINER_DB_NAME = "f25_miner"; // ⚠️ verify
+    private static final String MINER_DB_NAME = "s26_miner"; // ⚠️ verify
 
     /* ===================== TOKEN ===================== */
 
