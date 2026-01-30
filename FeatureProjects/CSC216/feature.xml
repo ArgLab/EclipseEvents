@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="core"
-      label="Core"
+      id="CSC216"
+      label="CSC216"
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -18,6 +18,10 @@
 
    <plugin
          id="com.arglab.eclipsedatacollector.core"
+         version="0.0.0"/>
+
+   <plugin
+         id="com.arglab.eclipsedatacollector.jenkins"
          version="0.0.0"/>
 
 </feature>
