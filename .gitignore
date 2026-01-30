@@ -6,6 +6,7 @@
 /build/
 /tmp/
 *.log
+*.jar
 *.zip
 target/
 .gradle/

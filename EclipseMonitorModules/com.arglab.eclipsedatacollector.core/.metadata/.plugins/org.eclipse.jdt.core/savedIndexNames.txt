@@ -1,0 +1,3 @@
+INDEX VERSION 1.134+H:\NCSU Semesters\Research_Eclipse_Plugin\Plugin Data From Server\Eclipse2024Workspace\com.arglab.eclipsedatacollector.core\.metadata\.plugins\org.eclipse.jdt.core
+3413270776.index
+3071323061.index
