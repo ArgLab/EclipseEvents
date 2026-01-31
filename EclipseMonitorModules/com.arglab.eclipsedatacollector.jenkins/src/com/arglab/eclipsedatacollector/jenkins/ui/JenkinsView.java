@@ -146,7 +146,7 @@ public class JenkinsView  extends ViewPart{
 	        try {
 	        	
 	        	
-	            String repo = JenkinsUtil.detectActiveProjectName();
+	            String repo = JenkinsUtil.detectActiveGitRepoName();
 	            if (repo == null) {
 	                System.out.println("No active project detected");
 	                return;
