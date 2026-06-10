@@ -15,10 +15,11 @@ import org.eclipse.ui.*;
 
 public class JenkinsUtil {
 
+    // Update the API_BASE and MINER_DB_NAME
     private static final String API_BASE =
-        "http://lin-sesmith01.csc.ncsu.edu:8080/api/build-info/latest/";
+        "API_BASE";
 
-    private static final String MINER_DB_NAME = "s26_miner"; // ⚠️ verify
+    private static final String MINER_DB_NAME = "MINER_DB_NAME";
 
     /* ===================== TOKEN ===================== */
 
@@ -81,33 +82,6 @@ public class JenkinsUtil {
 
         return sb.toString();
     }
-
-    /* ===================== PROJECT DETECTION ===================== */
-
-//    public static String detectActiveProjectName() {
-//        try {
-//            IWorkbenchWindow win =
-//                PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-//            if (win == null) return null;
-//
-//            IWorkbenchPage page = win.getActivePage();
-//            if (page != null && page.getActiveEditor() != null) {
-//                IEditorInput input = page.getActiveEditor().getEditorInput();
-//                IFile file = input.getAdapter(IFile.class);
-//                if (file != null) {
-//                    return file.getProject().getName();
-//                }
-//            }
-//
-//            for (IProject p :
-//                ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-//                if (p.isOpen()) return p.getName();
-//            }
-//        } catch (Exception ignored) {
-//        	System.out.println("Exception Happened due to "+ignored.toString());
-//        }
-//        return null;
-//    }
     
     //GitHub Repository Name Detection
     

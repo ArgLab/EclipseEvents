@@ -516,18 +516,6 @@ public class Activator extends AbstractUIPlugin implements IStartup, ISelectionL
         } catch (Exception e) {
             e.printStackTrace();
         }
-		
-		
-//		Job initJob = new Job("Initialize Feature Management") {
-//            @Override
-//            protected IStatus run(IProgressMonitor monitor) {
-//                FeatureManager manager = new FeatureManager();
-//                manager.installFeatureIfNeeded();
-//                return Status.OK_STATUS;
-//            }
-//        };
-//        
-//        initJob.schedule(2000);
         
         System.out.println("Early startup: Feature management scheduled");
 		
