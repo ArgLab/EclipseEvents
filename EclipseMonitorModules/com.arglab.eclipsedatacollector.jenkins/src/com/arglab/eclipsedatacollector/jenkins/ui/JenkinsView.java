@@ -83,7 +83,17 @@ public class JenkinsView  extends ViewPart{
 
         TreeColumn column = new TreeColumn(tree, SWT.LEFT);
         column.setText("JSON file");
-        column.setWidth(400);
+        
+        tree.addControlListener(new org.eclipse.swt.events.ControlAdapter() {
+            @Override
+            public void controlResized(org.eclipse.swt.events.ControlEvent e) {
+                Tree tree = (Tree) e.widget;
+                if (tree.getColumnCount() > 0) {
+                    TreeColumn col = tree.getColumn(0);
+                    col.setWidth(tree.getClientArea().width - 5);
+                }
+            }
+        });
 
         viewer.addTreeListener(new ITreeViewerListener() {
             
