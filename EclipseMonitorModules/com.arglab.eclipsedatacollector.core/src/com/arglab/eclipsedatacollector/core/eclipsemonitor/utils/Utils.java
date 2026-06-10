@@ -19,10 +19,6 @@ public class Utils {
 		//deal with ill formatted usernames
 		username = preferences.get("USERNAME", "default").toLowerCase();
 		email = preferences.get("EMAIL", "default").toLowerCase();
-		semester = preferences.get("SEMESTER", "default");
-		course = preferences.get("COURSE", "default");
-		section = preferences.get("SECTION", "default");
-		System.out.print(semester+" "+course+" "+section);
 		if(email.contains("@ncsu.edu")) {
 			if(email.replace("@ncsu.edu", "").equals(username)) {
 				// They match, we can just move on
@@ -43,6 +39,24 @@ public class Utils {
 				return username;
 			}
 		}
+	}
+	
+	public static String getSemester() {
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode("csc.plugin.prefs.page");
+		semester = preferences.get("SEMESTER", "default");
+		return semester;
+	}
+	
+	public static String getCourse() {
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode("csc.plugin.prefs.page");
+		course = preferences.get("COURSE", "default");
+		return course;
+	}
+	
+	public static String getSection() {
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode("csc.plugin.prefs.page");
+		section = preferences.get("SECTION", "default");
+		return section;
 	}
 	
 	public static String getIpAddress() {

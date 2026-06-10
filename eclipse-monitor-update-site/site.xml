@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/core_1.0.0.202508201129.jar" id="core" version="1.0.0.202508201129">
-      <category name="Core"/>
+   <feature url="features/CSC216_1.0.0.202601301853.jar" id="CSC216" version="1.0.0.202601301853">
+      <category name="CSC216"/>
    </feature>
-   <feature url="features/analysis_1.0.0.202508201129.jar" id="analysis" version="1.0.0.202508201129">
-      <category name="Optional"/>
+   <feature url="features/CSC316_1.0.0.202601301853.jar" id="CSC316" version="1.0.0.202601301853">
+      <category name="CSC316"/>
    </feature>
-   <category-def name="Core" label="core"/>
-   <category-def name="Optional" label="optional"/>
+   <category-def name="CSC216" label="CSC216"/>
+   <category-def name="CSC316" label="CSC316"/>
 </site>

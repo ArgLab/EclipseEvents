@@ -27,11 +27,17 @@ public class EventDataJsonObject {
 	private String javaVersion;
 	private String javaVendor;
 	private String eclipseVersion;
+	private String semester;
+	private String course;
+	private String section;
 	
 	public EventDataJsonObject(List<SequentialEventData> sequentialEventData,List<WorkSpaceLog> errorLogList) {
 		this.errorLogList = errorLogList;
 		this.sequentialEventData = sequentialEventData;
 		this.username = Utils.getUsernameFromPref();
+		this.semester = Utils.getSemester();
+		this.course = Utils.getCourse();
+		this.section = Utils.getSection();
 		
 	}
 
@@ -100,7 +106,7 @@ public class EventDataJsonObject {
 				+ ", username=" + username + ", IPAddress=" + IPAddress + ", MACAddress=" + MACAddress
 				+ ", PluginVersion=" + PluginVersion + ", osName=" + osName + ", osVersion=" + osVersion + ", osArch="
 				+ osArch + ", javaVersion=" + javaVersion + ", javaVendor=" + javaVendor + ", eclipseVersion="
-				+ eclipseVersion + "]";
+				+ eclipseVersion + ", semester=" + semester + ", class=" + course + ", section=" + section + "]";
 	}
 
 

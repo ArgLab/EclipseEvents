@@ -6,7 +6,6 @@
 /build/
 /tmp/
 *.log
-*.jar
 *.zip
 target/
 .gradle/
@@ -20,3 +19,5 @@ Thumbs.db
 *.bak
 *.rej
 *.launch
+
+/bin/
