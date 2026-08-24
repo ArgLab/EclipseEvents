@@ -11,6 +11,9 @@ import java.util.Map;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
+import com.arglab.eclipsedatacollector.core.eclipsemonitor.GlobalVars;
+import com.arglab.eclipsedatacollector.core.eclipsemonitor.model.jsonmodel.SequentialEventData;
+
 public class Utils {
 	static String username, email, semester, course, section;
 	
@@ -105,5 +108,9 @@ public class Utils {
 		 info.put("section", section);
 		 return info;
 	 }
+	 
+	 public static void logDashboardClick(String msg) {
+		    GlobalVars.listSequentialEvents.add(new SequentialEventData("JenkinsDashboardClick", msg));
+		}
 
 }

@@ -1,6 +1,10 @@
 package com.arglab.eclipsedatacollector.jenkins.ui;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -12,10 +16,11 @@ import org.eclipse.ui.*;
 
 public class JenkinsUtil {
 
+    // Update the API_BASE and MINER_DB_NAME
     private static final String API_BASE =
         "http://lin-sesmith01.csc.ncsu.edu:8080/api/build-info/latest/";
 
-    private static final String MINER_DB_NAME = "s26_miner"; // ⚠️ verify
+    private static final String MINER_DB_NAME = "f26_miner";
 
     /* ===================== TOKEN ===================== */
 
@@ -37,6 +42,18 @@ public class JenkinsUtil {
             return null;
         }
     }
+    
+//    private static String readAll(InputStream in) {
+//        if (in == null) return "<no body>";
+//        try (BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+//            StringBuilder sb = new StringBuilder();
+//            String line;
+//            while ((line = r.readLine()) != null) sb.append(line);
+//            return sb.toString();
+//        } catch (IOException e) {
+//            return "<error reading body: " + e.getMessage() + ">";
+//        }
+//    }
 
     /* ===================== API CALL ===================== */
 
@@ -61,10 +78,17 @@ public class JenkinsUtil {
 
         int status = conn.getResponseCode();
         if (status != 200) {
+//        	String errorBody = readAll(conn.getErrorStream());
+//            String authHeader = conn.getHeaderField("WWW-Authenticate");
+//            throw new RuntimeException("HTTP " + status
+//                + (authHeader != null ? " auth=" + authHeader : "")
+//                + " body=" + errorBody
+//                + " tokenLen=" + (token == null ? "null" : token.length()));
             throw new RuntimeException("HTTP " + status);
         }
 
         BufferedReader reader =
+//        	new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
             new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
         StringBuilder sb = new StringBuilder();
@@ -78,13 +102,12 @@ public class JenkinsUtil {
 
         return sb.toString();
     }
-
-    /* ===================== PROJECT DETECTION ===================== */
-
-    public static String detectActiveProjectName() {
+    
+    //GitHub Repository Name Detection
+    
+    public static String detectActiveGitRepoName() {
         try {
-            IWorkbenchWindow win =
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+            IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
             if (win == null) return null;
 
             IWorkbenchPage page = win.getActivePage();
@@ -92,17 +115,55 @@ public class JenkinsUtil {
                 IEditorInput input = page.getActiveEditor().getEditorInput();
                 IFile file = input.getAdapter(IFile.class);
                 if (file != null) {
-                    return file.getProject().getName();
+                    IProject project = file.getProject();
+                    File gitDir = findGitDirectory(project);
+                    if (gitDir != null) {
+                        File configFile = new File(gitDir, "config");
+                        return parseRepoNameFromGitConfig(configFile);
+                    }
                 }
             }
-
-            for (IProject p :
-                ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-                if (p.isOpen()) return p.getName();
-            }
-        } catch (Exception ignored) {
-        	System.out.println("Exception Happened due to "+ignored.toString());
+        } catch (Exception e) {
+            System.out.println("Exception happened: " + e.toString());
         }
         return null;
+    }
+
+    private static File findGitDirectory(IProject project) {
+        File dir = project.getLocation().toFile();
+        
+        // Search up to 5 levels up for .git directory
+        for (int i = 0; i < 5 && dir != null; i++) {
+            File gitDir = new File(dir, ".git");
+            if (gitDir.exists() && gitDir.isDirectory()) {
+                return gitDir;
+            }
+            dir = dir.getParentFile();
+        }
+        return null;
+    }
+
+    private static String parseRepoNameFromGitConfig(File configFile) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(configFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.startsWith("url =")) {
+                    String url = line.substring(5).trim();
+                    return extractRepoNameFromUrl(url);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading git config: " + e.toString());
+        }
+        return null;
+    }
+
+    private static String extractRepoNameFromUrl(String url) {
+        // Remove .git suffix
+        url = url.replaceAll("\\.git$", "");
+        // Get last part after / or :
+        String[] parts = url.split("[/:]");
+        return parts[parts.length - 1];
     }
 }

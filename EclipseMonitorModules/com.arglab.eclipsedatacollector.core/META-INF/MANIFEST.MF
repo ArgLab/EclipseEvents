@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Core
 Bundle-SymbolicName: com.arglab.eclipsedatacollector.core;singleton:=true
 Bundle-Version: 2.0.0.qualifier
-Export-Package: com.arglab.eclipsedatacollector.core.eclipsemonitor.utils
+Export-Package: com.arglab.eclipsedatacollector.core.eclipsemonitor.utils,
+ com.arglab.eclipsedatacollector.core.eclipsemonitor
 Bundle-Vendor: ARGLAB
 Automatic-Module-Name: com.arglab.eclipsedatacollector.core
 Bundle-Activator: com.arglab.eclipsedatacollector.core.eclipsemonitor.Activator
