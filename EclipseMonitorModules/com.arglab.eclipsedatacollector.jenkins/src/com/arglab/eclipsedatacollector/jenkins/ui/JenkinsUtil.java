@@ -61,7 +61,11 @@ public class JenkinsUtil {
             String repositoryName,
             String unityId
     ) throws Exception {
-
+    	
+    	if (unityId == null || unityId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Invalid username or email provided: cannot fetch build.");
+        }
+    	
         String token = generateUserToken(repositoryName, unityId);
         if (token == null)
             throw new IllegalStateException("User token generation failed");

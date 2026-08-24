@@ -20,28 +20,35 @@ public class Utils {
 	public static String getUsernameFromPref() {
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode("csc.plugin.prefs.page");
 		//deal with ill formatted usernames
-		username = preferences.get("USERNAME", "default").toLowerCase();
-		email = preferences.get("EMAIL", "default").toLowerCase();
-		if(email.contains("@ncsu.edu")) {
-			if(email.replace("@ncsu.edu", "").equals(username)) {
-				// They match, we can just move on
-				return username;
-			}
-			else {
-				// One of them doesn't match, it's impossible to know which is the problem 
-				// For now, we default to the email
-				return email.replace("@ncsu.edu", "");
-			}
+		username = preferences.get("USERNAME", "").trim().toLowerCase();
+		email = preferences.get("EMAIL", "").trim().toLowerCase();
+		
+		if (!email.endsWith("@ncsu.edu")) {
+		    return username.isEmpty() ? "" : username;
 		}
-		else {
-			// We know the email is illformated, so rely on the user name (if it is there)
-			if(username.equals("")) {
-				return "not entered";
-			}
-			else {
-				return username;
-			}
-		}
+		
+		return email.replace("@ncsu.edu", "");
+		
+//		if(email.contains("@ncsu.edu")) {
+//			if(email.replace("@ncsu.edu", "").equals(username)) {
+//				// They match, we can just move on
+//				return username;
+//			}
+//			else {
+//				// One of them doesn't match, it's impossible to know which is the problem 
+//				// For now, we default to the email
+//				return email.replace("@ncsu.edu", "");
+//			}
+//		}
+//		else {
+//			// We know the email is illformated, so rely on the user name (if it is there)
+//			if(username.equals("")) {
+//				return "not entered";
+//			}
+//			else {
+//				return username;
+//			}
+//		}
 	}
 	
 	public static String getSemester() {
