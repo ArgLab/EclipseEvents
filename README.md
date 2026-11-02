@@ -3,6 +3,10 @@
 
 A real-time plugin for tracking events within the Eclipse IDE.
 
+## How EclipseEvents works
+
+![Diagram showing EclipseEvents listeners collecting IDE events and sending JSON data to a database](Plugin_Diagram.jpg)
+
 ---
 
 ## 🚀 Features
